@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0e1116" />
+  <meta name="description" content="Privacy policy for Local Gigs PP — Phnom Penh short-gig board. On-device storage only in current build." />
+  <title>Privacy Policy · Local Gigs PP</title>
+  <style>
+    :root { --bg:#0e1116; --card:#181e27; --border:#2e3848; --text:#eef2f7; --muted:#8f9cb0; --accent:#ffb020; --ok:#4cc9a0; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: "Noto Sans Khmer", system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.55; padding: 20px 16px 48px; }
+    main { max-width: 640px; margin: 0 auto; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+    h1 { font-size: 1.35rem; margin-bottom: 6px; }
+    h2 { font-size: 1rem; color: var(--accent); margin: 20px 0 8px; }
+    p, li { font-size: 0.95rem; }
+    ul { padding-left: 1.2rem; margin-top: 8px; }
+    li { margin: 6px 0; }
+    .muted { color: var(--muted); font-size: 0.82rem; }
+    .badge { display: inline-block; background: rgba(255,176,32,.12); color: var(--accent); border: 1px solid rgba(255,176,32,.35); border-radius: 999px; padding: 4px 10px; font-size: 0.75rem; font-weight: 700; margin-bottom: 12px; }
+    a { color: var(--ok); }
+    .pub { margin-top: 8px; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="card">
+      <div class="badge">GitHub Pages–ready · localStorage-only PWA</div>
+      <h1>Privacy Policy</h1>
+      <p class="pub">Local Gigs PP (Local Gig Aggregator)</p>
+      <p class="muted" style="margin-top:8px">
+        Publisher display name: <strong>.//Talentless/x/Hack</strong><br />
+        Contact: <a href="mailto:grangerover@gmail.com">grangerover@gmail.com</a> (Reed Granger)<br />
+        Last updated: 2026-10-01 (pack 4 — hide-on-device)
+      </p>
+
+      <p style="margin-top:14px">
+        This policy describes the current <strong>static / PWA build</strong> of Local Gigs PP for Phnom Penh.
+        It is written for store and hosting review. It is <strong>not</strong> formal legal advice; Reed may still want counsel sign-off before a paid Play listing.
+      </p>
+
+      <h2>Who we are</h2>
+      <p>
+        Local Gigs PP is published under the display name <strong>.//Talentless/x/Hack</strong>.
+        Product contact for privacy questions: <a href="mailto:grangerover@gmail.com">grangerover@gmail.com</a>.
+      </p>
+
+      <h2>What the app does</h2>
+      <p>
+        A thin board to browse and post short informal gigs, then contact people on Telegram, WhatsApp, or phone
+        <strong>outside</strong> the app. There is no escrow, no in-app wallet, and no live dispatch.
+      </p>
+
+      <h2>Data stored on your device</h2>
+      <p>In the current build, data stays in your browser / WebView <strong>localStorage</strong> on the device:</p>
+      <ul>
+        <li><code>gigAgg.localPosts</code> — gig posts and skill offers you create</li>
+        <li><code>gigAgg.lang</code> — language preference (English / Khmer)</li>
+        <li><code>gigAgg.hideDemo</code> / <code>gigAgg.reviewMode</code> — Hide SAMPLE (screenshot / review mode)</li>
+        <li><code>gigAgg.installTipDismissed</code> — Add to Home Screen tip dismissed</li>
+        <li><code>gigAgg.savedStars</code> — ids of gigs you starred / saved on this device</li>
+        <li><code>gigAgg.hiddenGigs</code> — ids you hid via “Not interested / Hide on this device” (local only; distinct from stars)</li>
+        <li><code>gigAgg.deviceId</code> — random id so “My posts” works on the same browser</li>
+      </ul>
+      <p style="margin-top:8px">
+        Demo SAMPLE listings ship as a static JSON file inside the app package (fake contacts, labeled SAMPLE).
+        Offline-banner dismiss is <strong>session-only</strong> (not written to localStorage).
+        “Export my posts” downloads a JSON file you choose to save; it does not upload data.
+        Clearing site data removes local posts, stars, hidden ids, and preferences.
+      </p>
+
+      <h2>What we do not do (this build)</h2>
+      <ul>
+        <li>No cloud user accounts or passwords</li>
+        <li>No sale of personal data</li>
+        <li>No analytics SDKs baked into this static build</li>
+        <li>No payment card, Bakong, or KHQR settlement inside the app</li>
+        <li>No server-side chat or message storage</li>
+      </ul>
+
+      <h2>Third parties</h2>
+      <p>
+        Contact actions open Telegram, WhatsApp, or the phone dialer at your request — those apps have their own policies.
+        If you paste a KHQR image URL, that image may load from a third-party host.
+        Hosting this file on GitHub Pages (or similar) means the host’s standard web logs may apply to page requests.
+      </p>
+
+      <h2>User content &amp; off-app messaging</h2>
+      <p>
+        Titles, descriptions, and contact handles you post are <strong>user-generated content</strong> stored on your device in this build.
+        SAMPLE seed rows ship in the app package and are labeled. Messaging happens only after you confirm leaving the app —
+        we do not store or moderate Telegram/WhatsApp chats. If you suspect a scam: leave the chat, block the sender, and do not send money.
+      </p>
+
+      <h2>Children</h2>
+      <p>Intended for adults <strong>18+</strong>. Do not post or accept gigs involving minors.</p>
+
+      <h2>Future backends</h2>
+      <p>
+        If a Google Sheet / Form or other backend is added later, this policy will be updated to say what leaves the device and why.
+        Until then, treat the product as <strong>on-device storage + static assets</strong>.
+      </p>
+
+      <h2>Contact / deletion</h2>
+      <p>
+        Delete your posts in-app (My posts), or clear the site’s browser data.
+        Questions: <a href="mailto:grangerover@gmail.com">grangerover@gmail.com</a>.
+      </p>
+
+      <p class="muted" style="margin-top:20px"><a href="/">← Privacy policies home</a></p>
+    </div>
+  </main>
+</body>
+</html>
