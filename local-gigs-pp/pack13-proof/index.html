@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0e1116" />
+  <title>Pack 13 proof · Local Gigs PP</title>
+  <style>
+    :root { --bg:#0e1116; --card:#181e27; --border:#2e3848; --text:#eef2f7; --muted:#8f9cb0; --accent:#ffb020; --ok:#4cc9a0; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans Khmer", sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; padding: 20px 16px 48px; }
+    main { max-width: 920px; margin: 0 auto; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+    h1 { font-size: 1.3rem; margin-bottom: 6px; }
+    .muted { color: var(--muted); font-size: 0.85rem; }
+    .badge { display: inline-block; background: rgba(255,176,32,.12); color: var(--accent); border: 1px solid rgba(255,176,32,.35); border-radius: 999px; padding: 4px 10px; font-size: 0.75rem; font-weight: 700; margin-bottom: 12px; }
+    a { color: var(--ok); }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; margin-top: 18px; }
+    figure { background: #10151d; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+    figure a { display: block; }
+    img { width: 100%; height: auto; display: block; background: #000; }
+    figcaption { padding: 10px 12px; font-size: 0.82rem; color: var(--muted); }
+    figcaption strong { color: var(--text); display: block; margin-bottom: 2px; }
+    .note { margin-top: 14px; font-size: 0.88rem; }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="card">
+      <div class="badge">PR proof · not product assets</div>
+      <h1>Local Gigs PP — Pack 13 (v0.11) screenshots</h1>
+      <p class="muted" style="margin-top:8px">
+        Hosted for review of
+        <a href="https://github.com/Unbeltedbark/local-gigs-pp/pull/1">PR #1</a>
+        · branch <code>feat/pack13-ad-slots-blocker-terms</code>.
+        Images are external proofs only (never committed to the product branch).
+      </p>
+      <p class="note muted">Headless Chrome 154 · 412×915 · local run against that branch. Smoke: RESULT OK (455 checks).</p>
+      <div class="grid">
+        <figure>
+          <a href="01_terms_gate_en.png"><img src="01_terms_gate_en.png" alt="Terms gate EN" loading="lazy" /></a>
+          <figcaption><strong>01 · Terms gate (EN)</strong> First open; Accept disabled; background inert</figcaption>
+        </figure>
+        <figure>
+          <a href="02_terms_gate_km.png"><img src="02_terms_gate_km.png" alt="Terms gate KM" loading="lazy" /></a>
+          <figcaption><strong>02 · Terms gate (KM)</strong> Gate language toggle to ខ្មែរ</figcaption>
+        </figure>
+        <figure>
+          <a href="03_list_reserved_slot.png"><img src="03_list_reserved_slot.png" alt="List reserved slot" loading="lazy" /></a>
+          <figcaption><strong>03 · List reserved slot</strong> Dashed Sponsored placeholder after 4th card</figcaption>
+        </figure>
+        <figure>
+          <a href="04_detail_reserved_slot.png"><img src="04_detail_reserved_slot.png" alt="Detail reserved slot" loading="lazy" /></a>
+          <figcaption><strong>04 · Detail reserved slot</strong> Second placeholder below detail card</figcaption>
+        </figure>
+        <figure>
+          <a href="05_contact_confirm_fixed.png"><img src="05_contact_confirm_fixed.png" alt="Contact confirm fixed" loading="lazy" /></a>
+          <figcaption><strong>05 · Contact confirm fixed</strong> Leave-app dialog appears (was broken on main)</figcaption>
+        </figure>
+        <figure>
+          <a href="06_post_blocked_bilingual.png"><img src="06_post_blocked_bilingual.png" alt="Post blocked bilingual" loading="lazy" /></a>
+          <figcaption><strong>06 · Post blocked</strong> Bilingual EN+KM hard reject; text kept</figcaption>
+        </figure>
+        <figure>
+          <a href="07_safety_terms_link.png"><img src="07_safety_terms_link.png" alt="Safety terms link" loading="lazy" /></a>
+          <figcaption><strong>07 · Safety tab</strong> Prohibited line + Terms link; stamp v0.11</figcaption>
+        </figure>
+        <figure>
+          <a href="08_terms_page.png"><img src="08_terms_page.png" alt="Terms page EN" loading="lazy" /></a>
+          <figcaption><strong>08 · terms.html (EN)</strong> Disclaimer / not employer / own risk</figcaption>
+        </figure>
+        <figure>
+          <a href="09_terms_page_km.png"><img src="09_terms_page_km.png" alt="Terms page KM" loading="lazy" /></a>
+          <figcaption><strong>09 · terms.html (KM)</strong> Khmer section</figcaption>
+        </figure>
+      </div>
+      <p class="note muted" style="margin-top:18px">
+        Also: <a href="/local-gigs-pp/privacy.html">privacy.html</a> ·
+        <a href="/">publisher index</a>
+      </p>
+    </div>
+  </main>
+</body>
+</html>
