@@ -26,13 +26,13 @@
 <body>
   <main>
     <div class="card">
-      <div class="badge">GitHub Pages–ready · localStorage-only PWA</div>
+      <div class="badge">GitHub Pages–ready · on-device + optional shared Sheet</div>
       <h1>Privacy Policy</h1>
       <p class="pub">Local Gigs PP (Local Gig Aggregator)</p>
       <p class="muted" style="margin-top:8px">
         Publisher display name: <strong>.//Talentless/x/Hack</strong><br />
         Contact: <a href="mailto:grangerover@gmail.com">grangerover@gmail.com</a> (Reed Granger)<br />
-        Last updated: 2026-10-01 (pack 4 — hide-on-device)
+        Last updated: 2026-10-06 (Phase B — optional shared Form/Sheet board)
       </p>
 
       <p style="margin-top:14px">
@@ -58,16 +58,25 @@
         <li><code>gigAgg.localPosts</code> — gig posts and skill offers you create</li>
         <li><code>gigAgg.lang</code> — language preference (English / Khmer)</li>
         <li><code>gigAgg.hideDemo</code> / <code>gigAgg.reviewMode</code> — Hide SAMPLE (screenshot / review mode)</li>
-        <li><code>gigAgg.installTipDismissed</code> — Add to Home Screen tip dismissed</li>
+        <li><code>gigAgg.installTipDismissed</code> — old Add to Home Screen tip dismissed (legacy, before v0.13)</li>
+        <li><code>gigAgg.firstOpenDismissed</code> — first-open welcome note dismissed (v0.13+)</li>
+        <li><code>gigAgg.lastKhan</code> — the khan you picked on your last post, so the post form can pre-fill it (local only)</li>
         <li><code>gigAgg.savedStars</code> — ids of gigs you starred / saved on this device</li>
         <li><code>gigAgg.hiddenGigs</code> — ids you hid via “Not interested / Hide on this device” (local only; distinct from stars)</li>
         <li><code>gigAgg.deviceId</code> — random id so “My posts” works on the same browser</li>
+        <li><code>gigAgg.termsAccepted</code> — Terms &amp; Disclaimer version you accepted and when (local only)</li>
       </ul>
       <p style="margin-top:8px">
         Demo SAMPLE listings ship as a static JSON file inside the app package (fake contacts, labeled SAMPLE).
         Offline-banner dismiss is <strong>session-only</strong> (not written to localStorage).
         “Export my posts” downloads a JSON file you choose to save; it does not upload data.
         Clearing site data removes local posts, stars, hidden ids, and preferences.
+      </p>
+
+      <p style="margin-top:8px">
+        When you publish, the app checks your text against a short prohibited-content word list <strong>on your device</strong>.
+        Nothing is sent anywhere; blocked text is simply not saved. The “Sponsored · reserved space” boxes are empty placeholders —
+        no ad network, ad script, or tracking is loaded.
       </p>
 
       <h2>What we do not do (this build)</h2>
@@ -82,11 +91,11 @@
       <h2>Third parties</h2>
       <p>
         Contact actions open Telegram, WhatsApp, or the phone dialer at your request — those apps have their own policies.
-        If you paste a KHQR image URL, that image may load from a third-party host.
+        KHQR images appear only on legacy SAMPLE / pre-v0.13 posts (display only) and may load from a third-party host. The post form no longer collects a KHQR URL; there are no in-app payments — people settle outside the app.
         Hosting this file on GitHub Pages (or similar) means the host’s standard web logs may apply to page requests.
       </p>
 
-      <h2>User content &amp; off-app messaging</h2>
+      <h2>User content & off-app messaging</h2>
       <p>
         Titles, descriptions, and contact handles you post are <strong>user-generated content</strong> stored on your device in this build.
         SAMPLE seed rows ship in the app package and are labeled. Messaging happens only after you confirm leaving the app —
@@ -96,10 +105,29 @@
       <h2>Children</h2>
       <p>Intended for adults <strong>18+</strong>. Do not post or accept gigs involving minors.</p>
 
+      <h2>Shared board (when configured)</h2>
+      <p>
+        When Reed fills <code>data/feed-config.json</code>, posting can also send your gig text and contact link to a
+        <strong>Google Form</strong>, stored in a <strong>Google Sheet</strong>. Those posts (including contact links) are
+        <strong>public</strong> to anyone who opens the app with the shared board on. Google’s policies apply to Form/Sheet data.
+        With an empty config, behaviour stays on-device only (Phase A). Extra keys:
+        <code>gigAgg.sharedFeedCache</code>, <code>gigAgg.feedConfigCache</code>.
+      </p>
+      <p style="margin-top:8px">
+        This is a soft-launch Phnom Penh board — not a live city-wide marketplace claim.
+      </p>
+
+      <h2>Request removal</h2>
+      <p>
+        Delete your local copy in My posts. To remove a shared Sheet row, email
+        <a href="mailto:grangerover@gmail.com">grangerover@gmail.com</a> with the post id (or use in-app Report when configured).
+        Reed can set status to <code>hidden</code>/<code>removed</code> or delete the row.
+      </p>
+
       <h2>Future backends</h2>
       <p>
-        If a Google Sheet / Form or other backend is added later, this policy will be updated to say what leaves the device and why.
-        Until then, treat the product as <strong>on-device storage + static assets</strong>.
+        Further backends beyond the optional Form/Sheet above will be documented here the same day they ship.
+        Empty feed-config = <strong>on-device storage + static assets</strong> only.
       </p>
 
       <h2>Contact / deletion</h2>
@@ -108,7 +136,7 @@
         Questions: <a href="mailto:grangerover@gmail.com">grangerover@gmail.com</a>.
       </p>
 
-      <p class="muted" style="margin-top:20px"><a href="/">← Privacy policies home</a></p>
+      <p class="muted" style="margin-top:20px"><a href="terms.html">Terms &amp; Disclaimer</a> · <a href="index.html">← Back to Local Gigs PP</a></p>
     </div>
   </main>
 </body>

@@ -1,0 +1,19 @@
+{
+  "FORM_ACTION_URL": "",
+  "ENTRY": {
+    "kind": "",
+    "title": "",
+    "details": "",
+    "khan": "",
+    "pay": "",
+    "category": "",
+    "contact": "",
+    "lang": "",
+    "post_id": ""
+  },
+  "SHEET_CSV_URL": "",
+  "BLOCKLIST_CSV_URL": "",
+  "FEED_MODE": "postmod",
+  "REPORT_URL": "",
+  "_comment": "Ship empty. When FORM_ACTION_URL and SHEET_CSV_URL are blank the app behaves like Phase A (local + SAMPLE only, no shared-feed UI). Form field order (short answer): kind, title, details, khan, pay, category, contact, lang, post_id. Sheet adds Timestamp plus moderator columns status and note. FEED_MODE: postmod (default) = show unless status is hidden/removed; premod = only status=live. See store/MODERATION_GUIDE.md."
+}

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Local Gigs PP">
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffd06a"/>
+      <stop offset="55%" stop-color="#ffb020"/>
+      <stop offset="100%" stop-color="#f0a010"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="#0a0d12"/>
+  <rect x="48" y="48" width="416" height="416" rx="88" fill="url(#gold)"/>
+  <text x="256" y="318" text-anchor="middle" font-family="system-ui,Segoe UI,Arial,sans-serif" font-size="210" font-weight="800" fill="#1a1200" letter-spacing="-8">LG</text>
+</svg>

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0e1116" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="description" content="Phnom Penh local gig board — tutoring, cleaning, moto help, day labor, errands. Contact on Telegram. No escrow." />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Gigs PP" />
+  <meta name="application-name" content="Gigs PP" />
+  <title>Local Gigs PP · Phnom Penh</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png" />
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg" />
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main-content" data-i18n="skipToContent">Skip to content</a>
+
+  <div id="offline-banner" class="offline-banner" role="status" aria-live="polite">
+    <span class="offline-banner-text" data-i18n="offlineBanner">Offline — showing cached seed + your local posts.</span>
+    <button type="button" class="offline-dismiss" id="btn-offline-dismiss" data-i18n="offlineDismiss" aria-label="Dismiss offline banner">Dismiss</button>
+  </div>
+
+  <header class="app-header">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">LG</div>
+      <div>
+        <h1 data-i18n="appTitle">Local Gigs PP</h1>
+        <div class="sub" data-i18n="appSub">Phnom Penh short gigs · off-app chat</div>
+      </div>
+    </div>
+    <div class="lang-toggle" role="group" aria-label="Language">
+      <button type="button" data-lang="en" class="active" aria-label="English" aria-pressed="true">EN</button>
+      <button type="button" data-lang="km" aria-label="Khmer" aria-pressed="false">ខ្មែរ</button>
+    </div>
+  </header>
+
+  <main id="main-content" tabindex="-1">
+    <section id="panel-browse" class="panel active" aria-label="Browse">
+      <div id="browse-list-view">
+        <div id="first-open-banner" class="first-open hidden" role="region" aria-labelledby="first-open-text">
+          <p id="first-open-text" class="first-open-text"><span data-i18n="firstOpenBody">Short gigs near you in Phnom Penh. Tap a card, confirm once, then chat on Telegram.</span> <span id="first-open-install" class="first-open-install" data-i18n="firstOpenInstall">Tip: add it to your Home Screen.</span></p>
+          <button type="button" class="first-open-dismiss" id="btn-first-open-dismiss" data-i18n="firstOpenDismiss" aria-label="Dismiss welcome note">Got it</button>
+        </div>
+
+        <div class="filters-sticky" id="filters-sticky">
+          <div class="type-tabs" role="tablist" aria-label="Feed type">
+            <button type="button" data-feed="need" class="active-need" data-i18n="tabNeed" aria-pressed="true">Gigs needed</button>
+            <button type="button" data-feed="offer" data-i18n="tabOfferFeed" aria-pressed="false">People offering</button>
+            <button type="button" data-feed="saved" data-i18n="tabSaved" aria-pressed="false">Saved</button>
+          </div>
+          <div class="filters">
+            <div>
+              <label for="filter-cat" data-i18n="filterCat">Category</label>
+              <select id="filter-cat"></select>
+            </div>
+            <div>
+              <label for="filter-khan" data-i18n="filterKhan">Khan / area</label>
+              <select id="filter-khan"></select>
+            </div>
+            <div class="full">
+              <label for="filter-lang" data-i18n="filterLang">Language</label>
+              <select id="filter-lang"></select>
+            </div>
+          </div>
+        </div>
+
+        <p id="shared-feed-status" class="shared-feed-status hidden" role="status" aria-live="polite"></p>
+        <div class="feed-meta-row">
+          <div class="feed-count" id="feed-count" aria-live="polite"></div>
+          <div class="demo-row" id="demo-bar" role="group" aria-label="SAMPLE demo cards">
+            <span class="demo-row-text" id="demo-banner-copy">SAMPLE demo cards are hidden.</span>
+            <button type="button" class="link-btn demo-toggle" id="btn-toggle-demo" aria-pressed="false">Show SAMPLE</button>
+          </div>
+        </div>
+        <p id="progress-line" class="progress-line hidden" aria-live="polite"></p>
+        <div id="feed-loading" class="loading-box hidden">
+          <div class="spinner" aria-hidden="true"></div>
+          <div data-i18n="loading">Loading gigs…</div>
+        </div>
+        <div id="feed-list"></div>
+      </div>
+
+      <div id="browse-detail-view" class="hidden">
+        <div id="detail-root"></div>
+      </div>
+    </section>
+
+    <section id="panel-post" class="panel" aria-label="Post">
+      <div class="card wizard">
+        <div class="wizard-head">
+          <h2 data-i18n="wizTitle">Post</h2>
+          <p id="wiz-progress" class="wiz-progress" aria-live="polite">Step 1 of 4</p>
+        </div>
+        <div class="wiz-dots" aria-hidden="true"><span class="wiz-dot" data-dot="1"></span><span class="wiz-dot" data-dot="2"></span><span class="wiz-dot" data-dot="3"></span><span class="wiz-dot" data-dot="4"></span></div>
+        <form id="form-post" novalidate>
+          <fieldset class="wiz-step" data-step="1">
+            <legend data-i18n="wizStep1">Do you need help, or offer help?</legend>
+            <div class="choice-grid">
+              <label class="choice"><input type="radio" name="post-type" value="need" checked /><span class="choice-title" data-i18n="wizNeedTitle">I need help</span><span class="choice-sub" data-i18n="wizNeedSub">Post a short gig</span></label>
+              <label class="choice"><input type="radio" name="post-type" value="offer" /><span class="choice-title" data-i18n="wizOfferTitle">I offer help</span><span class="choice-sub" data-i18n="wizOfferSub">Show what you can do</span></label>
+            </div>
+          </fieldset>
+
+          <fieldset class="wiz-step hidden" data-step="2">
+            <legend data-i18n="wizStep2">What and where?</legend>
+            <p class="field-label" id="post-cat-label" data-i18n="category">Category</p>
+            <div class="cat-pick" id="post-cat" role="radiogroup" aria-labelledby="post-cat-label"></div>
+
+            <label for="post-title" data-i18n="fieldWhat">What (one short line)</label>
+            <input id="post-title" type="text" maxlength="120" autocomplete="off" />
+
+            <label for="post-rate" data-i18n="fieldPay">Pay</label>
+            <input id="post-rate" type="text" maxlength="40" data-i18n-placeholder="phPay" />
+
+            <label for="post-khan" data-i18n="fieldKhan">Khan / area</label>
+            <select id="post-khan"></select>
+            <p id="khan-remembered" class="field-hint hidden" data-i18n="khanRemembered">Same khan as your last post.</p>
+
+            <label for="post-when" data-i18n="fieldWhenOpt">When (optional)</label>
+            <input id="post-when" type="text" maxlength="80" data-i18n-placeholder="phWhenShort" />
+
+            <label for="post-desc" data-i18n="fieldDetailsOpt">Details (optional)</label>
+            <textarea id="post-desc" maxlength="800" data-i18n-placeholder="phDetails"></textarea>
+          </fieldset>
+
+          <fieldset class="wiz-step hidden" data-step="3">
+            <legend data-i18n="wizStep3">How should people reach you?</legend>
+            <label for="post-contact" data-i18n="fieldContact">Telegram, WhatsApp, or phone</label>
+            <input id="post-contact" type="text" maxlength="80" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="@name · t.me/name · 012 345 678" aria-describedby="post-contact-hint contact-preview" />
+            <p id="post-contact-hint" class="field-hint" data-i18n="fieldContactHint">Type @name, t.me/name, wa.me/855…, 012 345 678 or +855…</p>
+            <p id="contact-preview" class="contact-preview" aria-live="polite"></p>
+          </fieldset>
+
+          <fieldset class="wiz-step hidden" data-step="4">
+            <legend data-i18n="wizStep4">Check, then post</legend>
+            <div id="wiz-review"></div>
+            <p class="field-hint" data-i18n="wizReviewNote">Saved on this phone only. Your words stay exactly as you typed them — no translation.</p>
+          </fieldset>
+
+          <p id="wiz-error" class="wiz-error" role="alert"></p>
+          <div class="wiz-nav">
+            <button type="button" class="btn btn-secondary invisible" id="wiz-back" data-i18n="wizBack">Back</button>
+            <button type="button" class="btn btn-primary" id="wiz-next" data-i18n="wizNext">Next</button>
+            <button type="submit" class="btn btn-primary hidden" id="wiz-submit" data-i18n="submitPost">Post it</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <section id="panel-mine" class="panel" aria-label="My posts">
+      <div class="card">
+        <h2 data-i18n="mineTitle">My posts</h2>
+        <p id="mine-progress" class="progress-line"></p>
+        <p class="muted small" data-i18n="mineHint">Owned by a device id saved in this browser. Clearing site data removes them.</p>
+        <button type="button" class="btn btn-secondary" id="btn-export-posts" data-i18n="exportPosts" aria-label="Export my posts as JSON">Export my posts</button>
+      </div>
+      <div id="mine-list"></div>
+    </section>
+
+    <section id="panel-safety" class="panel" aria-label="Safety">
+      <div class="card howto">
+        <h2 data-i18n="safetyTitle">Safety & how it works</h2>
+
+        <div class="safety ok" data-i18n="safetyAge">18+ only. Do not post or accept gigs involving minors. This is an adult short-gig board.</div>
+        <div class="safety" data-i18n="safetyNoEscrow">No escrow, wallets, deposits, or in-app payments — ever.</div>
+        <div class="safety" data-i18n="safetyProhibited">Prohibited: sex work or sexual services, anything involving minors, and illegal goods or services. Posts with these terms are blocked on this phone.</div>
+        <div class="safety" data-i18n="safetyUgc">User posts and SAMPLE seed can appear here. Messaging happens off-app (Telegram / WhatsApp / phone). We don’t moderate live chats.</div>
+
+        <h3 data-i18n="howTitle1">How it works</h3>
+        <p data-i18n="how1"></p>
+
+        <h3 data-i18n="howTitle2">Payments</h3>
+        <p data-i18n="how2"></p>
+
+        <h3 data-i18n="howTitle3">Safety</h3>
+        <p data-i18n="how3"></p>
+        <div class="safety" data-i18n="safetyBlurb"></div>
+        <ul>
+          <li data-i18n="safetyTip1"></li>
+          <li data-i18n="safetyTip2"></li>
+          <li data-i18n="safetyTip3"></li>
+          <li data-i18n="safetyTip4"></li>
+        </ul>
+
+        <h3 data-i18n="howTitle4">Moderation</h3>
+        <p data-i18n="how4"></p>
+
+        <p style="margin-top:14px">
+          <a href="privacy.html" data-i18n="privacyLink">Privacy policy</a>
+          ·
+          <a href="terms.html" data-i18n="termsLink">Terms &amp; disclaimer</a>
+        </p>
+        <p class="muted small" style="margin-top:10px" data-i18n="abuseContact">
+          Report abuse or policy questions: grangerover@gmail.com
+        </p>
+        <p style="margin-top:6px">
+          <a href="mailto:grangerover@gmail.com?subject=Local%20Gigs%20PP%20report">grangerover@gmail.com</a>
+        </p>
+        <div id="hidden-mgmt" class="hidden-mgmt" aria-label="Hidden gigs on this device">
+          <h3 data-i18n="hiddenMgmtTitle">Hidden on this device</h3>
+          <p id="hidden-count" class="muted small">0 hidden</p>
+          <button type="button" class="btn btn-secondary" id="btn-clear-hidden" data-i18n="clearHidden" aria-label="Clear all hidden gigs on this device">Clear hidden</button>
+        </div>
+        <p id="app-version-stamp" class="version-stamp muted" aria-label="App version">v0.14</p>
+      </div>
+    </section>
+  </main>
+
+  <nav class="tab-bar" aria-label="Main">
+    <button type="button" data-tab="browse" class="active"><span class="ico" aria-hidden="true">🏠</span><span data-i18n="tabBrowse">Browse</span></button>
+    <button type="button" data-tab="post"><span class="ico" aria-hidden="true">➕</span><span data-i18n="tabPost">Post</span></button>
+    <button type="button" data-tab="mine"><span class="ico" aria-hidden="true">📋</span><span data-i18n="tabMine">My posts</span></button>
+    <button type="button" data-tab="safety"><span class="ico" aria-hidden="true">🛡️</span><span data-i18n="tabSafety">Safety</span></button>
+  </nav>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+  <div id="a11y-status" class="sr-only" role="status" aria-live="assertive" aria-atomic="true"></div>
+  <div id="modal-root"></div>
+  <div id="terms-gate" class="terms-gate hidden" role="dialog" aria-modal="true" aria-labelledby="terms-gate-title"></div>
+
+  <script src="app.js" defer></script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js").catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>
