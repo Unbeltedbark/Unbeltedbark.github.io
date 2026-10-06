@@ -1,19 +1,8 @@
 {
-  "FORM_ACTION_URL": "",
-  "ENTRY": {
-    "kind": "",
-    "title": "",
-    "details": "",
-    "khan": "",
-    "pay": "",
-    "category": "",
-    "contact": "",
-    "lang": "",
-    "post_id": ""
-  },
-  "SHEET_CSV_URL": "",
-  "BLOCKLIST_CSV_URL": "",
-  "FEED_MODE": "postmod",
+  "SUBMIT_EMAIL": "",
+  "SUBMIT_TELEGRAM_BOT": "",
+  "FEED_JSON_URL": "data/feed.json",
   "REPORT_URL": "",
-  "_comment": "Ship empty. When FORM_ACTION_URL and SHEET_CSV_URL are blank the app behaves like Phase A (local + SAMPLE only, no shared-feed UI). Form field order (short answer): kind, title, details, khan, pay, category, contact, lang, post_id. Sheet adds Timestamp plus moderator columns status and note. FEED_MODE: postmod (default) = show unless status is hidden/removed; premod = only status=live. See store/MODERATION_GUIDE.md."
+  "FEED_MODE": "postmod",
+  "_comment": "SUBMIT_EMAIL and SUBMIT_TELEGRAM_BOT ship empty (on-phone posts only; no shared-board posting UI). FEED_JSON_URL points at the public board file on Pages. When a submit channel is filled later, the wizard offers Send to the shared board. See store/MODERATION_GUIDE.md."
 }

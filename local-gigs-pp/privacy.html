@@ -26,13 +26,13 @@
 <body>
   <main>
     <div class="card">
-      <div class="badge">GitHub Pages–ready · on-device + optional shared Sheet</div>
+      <div class="badge">GitHub Pages–ready · on-device + optional shared board</div>
       <h1>Privacy Policy</h1>
       <p class="pub">Local Gigs PP (Local Gig Aggregator)</p>
       <p class="muted" style="margin-top:8px">
         Publisher display name: <strong>.//Talentless/x/Hack</strong><br />
         Contact: <a href="mailto:grangerover@gmail.com">grangerover@gmail.com</a> (Reed Granger)<br />
-        Last updated: 2026-10-06 (Phase B — optional shared Form/Sheet board)
+        Last updated: 2026-10-06 (Phase B — public feed.json board; submit channels off by default)
       </p>
 
       <p style="margin-top:14px">
@@ -105,28 +105,34 @@
       <h2>Children</h2>
       <p>Intended for adults <strong>18+</strong>. Do not post or accept gigs involving minors.</p>
 
-      <h2>Shared board (when configured)</h2>
+      <h2>Shared board</h2>
       <p>
-        When Reed fills <code>data/feed-config.json</code>, posting can also send your gig text and contact link to a
-        <strong>Google Form</strong>, stored in a <strong>Google Sheet</strong>. Those posts (including contact links) are
-        <strong>public</strong> to anyone who opens the app with the shared board on. Google’s policies apply to Form/Sheet data.
-        With an empty config, behaviour stays on-device only (Phase A). Extra keys:
-        <code>gigAgg.sharedFeedCache</code>, <code>gigAgg.feedConfigCache</code>.
+        The app can show a <strong>public</strong> shared board from a static
+        <code>data/feed.json</code> on this site (titles, details, area, pay, category, language, and contact links).
+        An empty <code>posts</code> list means nothing is published yet.
       </p>
-      <p style="margin-top:8px">
+      <p>
+        <strong>Posting to the board is off in the shipped build</strong> (posts stay on your phone).
+        If a later build turns on a submit channel, you may choose to send a copy by
+        <strong>email to a moderator</strong> or via a <strong>Telegram bot</strong>.
+        The moderator sees the sender address / Telegram account; that identity is <strong>not</strong> published on the board.
+        Accepted posts (including contact links) are stored in Gmail and/or Google Sheets and then published in <code>feed.json</code>.
+        Google’s policies apply to those systems.
+      </p>
+      <p>
+        On-device caches may include <code>gigAgg.sharedFeedCache</code>, <code>gigAgg.feedConfigCache</code>.
         This is a soft-launch Phnom Penh board — not a live city-wide marketplace claim.
       </p>
-
-      <h2>Request removal</h2>
+<h2>Request removal</h2>
       <p>
-        Delete your local copy in My posts. To remove a shared Sheet row, email
+        Delete your local copy in My posts. To remove a shared board post, email
         <a href="mailto:grangerover@gmail.com">grangerover@gmail.com</a> with the post id (or use in-app Report when configured).
         Reed can set status to <code>hidden</code>/<code>removed</code> or delete the row.
       </p>
 
       <h2>Future backends</h2>
       <p>
-        Further backends beyond the optional Form/Sheet above will be documented here the same day they ship.
+        Further backends beyond the optional shared board above will be documented here the same day they ship.
         Empty feed-config = <strong>on-device storage + static assets</strong> only.
       </p>
 
