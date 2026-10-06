@@ -1,4 +1,4 @@
-/* Local Gigs PP — shell cache v0.14 — Phase B: shared feed (Form→Sheet) + Pages host prep */
+/* Local Gigs PP — shell cache v0.14 — Phase B: shared feed.json + Pages host prep */
 const CACHE = "gig-agg-v0.14-phase-b";
 const ASSETS = [
   "./",
@@ -7,6 +7,7 @@ const ASSETS = [
   "./app.js",
   "./data/gigs.json",
   "./data/feed-config.json",
+  "./data/feed.json",
   "./manifest.webmanifest",
   "./privacy.html",
   "./terms.html",
@@ -45,9 +46,8 @@ function isFeedOrConfig(url) {
   return (
     p.endsWith("/feed-config.json") ||
     p.endsWith("feed-config.json") ||
-    p.endsWith(".csv") ||
-    /[?&]output=csv\b/i.test(url.search) ||
-    /docs\.google\.com\/spreadsheets/i.test(url.href)
+    p.endsWith("/feed.json") ||
+    p.endsWith("feed.json")
   );
 }
 

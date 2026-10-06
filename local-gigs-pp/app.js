@@ -1,4 +1,4 @@
-/* Local Gig Aggregator v0.14 — Phase B: shared feed (Google Form → Sheet CSV) + Pages host.
+/* Local Gig Aggregator v0.14 — Phase B: shared feed.json + optional mailto/Telegram submit + Pages host.
    Phase A: clearer cards, 4-step post wizard, safe contact links.
    Pack 14: path reliability (post/browse/contact).
    Pack 13: modal fix, safe storage, reserved slots, content guard, terms gate.
@@ -96,7 +96,17 @@ const I18N = {
     requiredTitle: "Title is required",
     requiredCat: "Pick at least one category",
     postedOk: "Published on this phone — find it under Browse. Not sent to a server.",
-    postedOkShared: "Saved on this phone and sent to the shared board (visible after Sheet rules).",
+    postedOkShared: "Saved on this phone. Open your mail or Telegram to finish sending to the shared board.",
+    sendToSharedBoard: "Send to the shared board",
+    sendToSharedBoardSkip: "Keep on this phone only",
+    sendToSharedBoardHint: "A moderator checks it first. It usually appears within ~15 minutes.",
+    sendToSharedBoardEmail: "Send by email",
+    sendToSharedBoardTelegram: "Send via Telegram",
+    copyLgppBody: "Copy post text",
+    copyLgppBodyOk: "Post text copied — paste into the email or Telegram chat.",
+    copyLgppBodyFail: "Couldn’t copy. Long-press to select the text.",
+    sharedBoardMailApp: "your email app",
+    sharedBoardTelegramApp: "Telegram",
     sharedFeedLine: "Shared board · updated {when}",
     sharedFeedOffline: "Offline — showing last shared board from {when}",
     sharedFeedLoading: "Loading shared board…",
@@ -120,7 +130,7 @@ const I18N = {
     howTitle3: "Safety",
     how3: "18+ only — no gigs involving minors. Public meet first. Don’t send deposits to strangers. Exact address only after you trust the chat. Remove your own posts in My Posts.",
     howTitle4: "Moderation",
-    how4: "SAMPLE seed is demo-only. Your posts save on this phone. When the shared board is on, a copy can go to a Google Form/Sheet (public). Reed can hide rows. Off-app chats are outside our control.",
+    how4: "SAMPLE seed is demo-only. Your posts save on this phone. Shared listings (when any) come from the public board file. Off-app chats are outside our control.",
     privacyLink: "Privacy policy",
     loading: "Loading gigs…",
     loadError: "Couldn’t refresh seed data. Showing cache / local posts if available.",
@@ -139,7 +149,7 @@ const I18N = {
     noContact: "No contact on this listing.",
     hideDemo: "Hide SAMPLE",
     showDemo: "Show SAMPLE",
-    mineEmptyHint: "Your posts stay on this phone. Shared-board copies (when on) also appear for others after the Sheet rules.",
+    mineEmptyHint: "Your posts stay on this phone.",
     exportPosts: "Export my posts",
     exportOk: "Downloaded your posts (JSON)",
     exportEmpty: "Nothing to export — post a gig first.",
@@ -315,7 +325,17 @@ const I18N = {
     requiredTitle: "សូមបញ្ចូលចំណងជើង",
     requiredCat: "ជ្រើសប្រភេទយ៉ាងហោច១",
     postedOk: "បានផ្សាយលើទូរស័ព្ទនេះ — មើលក្នុងទំព័ររកមើល។ មិនបានផ្ញើទៅម៉ាស៊ីនមេទេ។",
-    postedOkShared: "បានរក្សាទុកលើទូរស័ព្ទ និងផ្ញើទៅក្តាររួម (បង្ហាញតាមវិធាន Sheet)។",
+    postedOkShared: "បានរក្សាទុកលើទូរស័ព្ទ។ បើកសំបុត្រ ឬ Telegram ដើម្បីបញ្ចប់ការផ្ញើទៅក្តាររួម។",
+    sendToSharedBoard: "ផ្ញើទៅក្តាររួម",
+    sendToSharedBoardSkip: "រក្សាទុកលើទូរស័ព្ទតែប៉ុណ្ណោះ",
+    sendToSharedBoardHint: "អ្នកសម្របសម្រួលពិនិត្យមុន។ ជាធម្មតាបង្ហាញក្នុង ~១៥នាទី។",
+    sendToSharedBoardEmail: "ផ្ញើតាមអ៊ីមែល",
+    sendToSharedBoardTelegram: "ផ្ញើតាម Telegram",
+    copyLgppBody: "ចម្លងអត្ថបទ",
+    copyLgppBodyOk: "បានចម្លង — បិទភ្ជាប់ក្នុងសំបុត្រ ឬ Telegram។",
+    copyLgppBodyFail: "មិនអាចចម្លង។ សង្កត់យូរដើម្បីជ្រើសអត្ថបទ។",
+    sharedBoardMailApp: "កម្មវិធីអ៊ីមែល",
+    sharedBoardTelegramApp: "Telegram",
     sharedFeedLine: "ក្តាររួម · ធ្វើបច្ចុប្បន្នភាព {when}",
     sharedFeedOffline: "គ្មានអ៊ីនធឺណិត — បង្ហាញក្តាររួមចុងក្រោយពី {when}",
     sharedFeedLoading: "កំពុងផ្ទុកក្តាររួម…",
@@ -339,7 +359,7 @@ const I18N = {
     howTitle3: "សុវត្ថិភាព",
     how3: "១៨ឆ្នាំឡើង — គ្មានការងារពាក់ព័ន្ធកុមារ។ ជួបកន្លែងសាធារណៈមុន។ កុំផ្ញើកក់ឱ្យមនុស្សចម្លែក។ អាសយដ្ឋានពិតប្រាកដបន្ទាប់ពីទុកចិត្ត។",
     howTitle4: "ការត្រួតពិនិត្យ",
-    how4: "SAMPLE សម្រាប់សាកល្បង។ ការផ្សាយរក្សាទុកលើទូរស័ព្ទ។ បើក្តាររួមបើក ច្បាប់ចម្លងអាចទៅ Google Form/Sheet (សាធារណៈ)។ Reed អាចលាក់ជួរ។ ការជជែកក្រៅកម្មវិធីនៅក្រៅការគ្រប់គ្រង។",
+    how4: "SAMPLE សម្រាប់សាកល្បង។ ការផ្សាយរក្សាទុកលើទូរស័ព្ទ។ ការផ្សាយរួម (បើមាន) មកពីឯកសារក្តារសាធារណៈ។ ការជជែកក្រៅកម្មវិធីនៅក្រៅការគ្រប់គ្រង។",
     privacyLink: "គោលការណ៍ភាពឯកជន",
     loading: "កំពុងផ្ទុក…",
     loadError: "មិនអាចផ្ទុកទិន្នន័យថ្មី។ បង្ហាញទិន្នន័យរក្សាទុក និងការផ្សាយលើទូរស័ព្ទ។",
@@ -358,7 +378,7 @@ const I18N = {
     noContact: "គ្មានទំនាក់ទំនងលើការផ្សាយនេះ។",
     hideDemo: "លាក់ SAMPLE",
     showDemo: "បង្ហាញ SAMPLE",
-    mineEmptyHint: "ការផ្សាយរបស់អ្នកនៅលើទូរស័ព្ទ។ ច្បាប់ចម្លងក្តាររួម (បើបើក) បង្ហាញសម្រាប់អ្នកផ្សេងតាមវិធាន Sheet។",
+    mineEmptyHint: "ការផ្សាយរបស់អ្នកនៅលើទូរស័ព្ទ។",
     exportPosts: "នាំចេញការផ្សាយរបស់ខ្ញុំ",
     exportOk: "បានទាញយកការផ្សាយ (JSON)",
     exportEmpty: "គ្មានអ្វីនាំចេញ — សូមផ្សាយការងារសិន។",
@@ -730,98 +750,57 @@ const PhaseA = Object.freeze({
 });
 /* PHASE_A_END */
 
-/* SHARED_SHEET_FEED_START — Phase B Form→Sheet shared feed (static helpers; smoke evals in Node).
-   When data/feed-config.json has empty FORM_ACTION_URL + SHEET_CSV_URL the app behaves like Phase A.
-   FEED_MODE: "postmod" (default) = show unless status is hidden/removed;
-              "premod" = only status=live.
-   Every Sheet row is re-validated: contact allowlist, ContentGuard, length caps. Text is escaped at render. */
+/* SHARED_SHEET_FEED_START — Phase B shared feed: static feed.json + optional mailto/Telegram submit (OFF by default).
+   FEED_JSON_URL set → read shared board (network-first). SUBMIT_EMAIL / SUBMIT_TELEGRAM_BOT empty → on-phone post only (no shared-board posting UI).
+   Every feed row re-validated: contact allowlist, ContentGuard, length caps. Text escaped at render. */
 const SharedSheetFeed = (() => {
-  const ENTRY_ORDER = ["kind", "title", "details", "khan", "pay", "category", "contact", "lang", "post_id"];
+  const FIELD_ORDER = ["kind", "title", "details", "khan", "pay", "category", "contact", "lang", "post_id"];
   const MAX_ROWS = 400;
   const MAX_CHARS = 800000;
   const CAPS = { title: 120, details: 1200, khan: 40, pay: 40, category: 40, contact: 80, lang: 8, post_id: 80, status: 20, note: 200 };
 
   function emptyConfig() {
     return {
-      FORM_ACTION_URL: "",
-      ENTRY: Object.fromEntries(ENTRY_ORDER.map((k) => [k, ""])),
-      SHEET_CSV_URL: "",
-      BLOCKLIST_CSV_URL: "",
-      FEED_MODE: "postmod",
+      SUBMIT_EMAIL: "",
+      SUBMIT_TELEGRAM_BOT: "",
+      FEED_JSON_URL: "data/feed.json",
       REPORT_URL: "",
+      FEED_MODE: "postmod",
     };
   }
 
   function normalizeConfig(raw) {
     const base = emptyConfig();
     if (!raw || typeof raw !== "object") return base;
-    base.FORM_ACTION_URL = String(raw.FORM_ACTION_URL || "").trim();
-    base.SHEET_CSV_URL = String(raw.SHEET_CSV_URL || "").trim();
-    base.BLOCKLIST_CSV_URL = String(raw.BLOCKLIST_CSV_URL || "").trim();
+    base.SUBMIT_EMAIL = String(raw.SUBMIT_EMAIL || "").trim();
+    base.SUBMIT_TELEGRAM_BOT = String(raw.SUBMIT_TELEGRAM_BOT || "").trim().replace(/^@/, "");
+    base.FEED_JSON_URL = String(raw.FEED_JSON_URL || "").trim() || "data/feed.json";
     base.REPORT_URL = String(raw.REPORT_URL || "").trim();
     const mode = String(raw.FEED_MODE || "postmod").trim().toLowerCase();
     base.FEED_MODE = mode === "premod" ? "premod" : "postmod";
-    const entry = raw.ENTRY && typeof raw.ENTRY === "object" ? raw.ENTRY : {};
-    ENTRY_ORDER.forEach((k) => { base.ENTRY[k] = String(entry[k] || "").trim(); });
     return base;
   }
 
+  /** Reading the shared board (feed.json). */
   function isConfigured(cfg) {
-    return !!(cfg && String(cfg.SHEET_CSV_URL || "").trim());
+    return !!(cfg && String(cfg.FEED_JSON_URL || "").trim());
   }
 
+  function submitEmail(cfg) {
+    const e = cfg && String(cfg.SUBMIT_EMAIL || "").trim();
+    if (!e || !/^[^s@]+@[^s@]+\.[^s@]+$/.test(e)) return "";
+    return e;
+  }
+
+  function submitTelegramBot(cfg) {
+    const u = cfg && String(cfg.SUBMIT_TELEGRAM_BOT || "").trim().replace(/^@/, "");
+    if (!u || !/^[A-Za-z0-9_]{5,32}$/.test(u)) return "";
+    return u;
+  }
+
+  /** Posting to the shared board (email and/or Telegram bot). Both empty = on-phone only. */
   function canPost(cfg) {
-    return !!(cfg && cfg.FORM_ACTION_URL && ENTRY_ORDER.every((k) => cfg.ENTRY && cfg.ENTRY[k]));
-  }
-
-  function parseCSV(text) {
-    const rows = [];
-    let row = [], field = "", q = false;
-    const s = String(text || "");
-    for (let i = 0; i < s.length; i += 1) {
-      const c = s[i];
-      if (q) {
-        if (c === '"') {
-          if (s[i + 1] === '"') { field += '"'; i += 1; } else q = false;
-        } else field += c;
-      } else if (c === '"') q = true;
-      else if (c === ",") { row.push(field); field = ""; }
-      else if (c === "\n" || c === "\r") {
-        if (c === "\r" && s[i + 1] === "\n") i += 1;
-        row.push(field); rows.push(row); row = []; field = "";
-      } else field += c;
-    }
-    if (field !== "" || row.length) { row.push(field); rows.push(row); }
-    return rows.filter((r) => r.some((x) => String(x).trim() !== ""));
-  }
-
-  function headerKey(h) {
-    const k = String(h || "").trim().toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
-    const ALIAS = {
-      timestamp: "created_at", time: "created_at",
-      type: "kind", kind: "kind",
-      title: "title", what: "title",
-      details: "details", description: "details", desc: "details",
-      area: "khan", khan: "khan",
-      pay: "pay", rate: "pay", rate_text: "pay",
-      category: "category", cat: "category",
-      contact: "contact", contact_url: "contact",
-      lang: "lang", language: "lang",
-      post_id: "post_id", id: "post_id", postid: "post_id",
-      status: "status", note: "note", notes: "note",
-    };
-    return ALIAS[k] || k;
-  }
-
-  function csvToObjects(text) {
-    const rows = parseCSV(text);
-    if (rows.length < 2) return [];
-    const head = rows[0].map(headerKey);
-    return rows.slice(1).map((r) => {
-      const o = {};
-      head.forEach((k, i) => { if (k && !(k in o)) o[k] = String(r[i] == null ? "" : r[i]).trim(); });
-      return o;
-    });
+    return !!(submitEmail(cfg) || submitTelegramBot(cfg));
   }
 
   function clean(v, max) {
@@ -831,35 +810,26 @@ const SharedSheetFeed = (() => {
       .slice(0, max);
   }
 
-  function statusVisible(status, mode) {
-    const s = clean(status, CAPS.status).toLowerCase();
-    if (mode === "premod") return s === "live";
-    return s !== "hidden" && s !== "removed";
+  function escapeField(v) {
+    return String(v == null ? "" : v).replace(/\\/g, "\\\\").replace(/\r?\n/g, "\\n");
   }
 
-  function parseBlocklist(text) {
-    const rows = csvToObjects(text);
-    const set = new Set();
-    rows.forEach((r) => {
-      const c = clean(r.contact || r.blocked || r.url || Object.values(r)[0], CAPS.contact);
-      if (c) set.add(c.toLowerCase());
-    });
-    if (!rows.length) {
-      parseCSV(text).forEach((row) => {
-        row.forEach((cell) => {
-          const c = clean(cell, CAPS.contact);
-          if (c && c.toLowerCase() !== "contact" && c.toLowerCase() !== "blocked") set.add(c.toLowerCase());
-        });
-      });
-    }
-    return set;
+  function unescapeField(v) {
+    return String(v == null ? "" : v).replace(/\\n/g, "\n").replace(/\\\\/g, "\\");
+  }
+
+  function statusVisible(status, mode) {
+    const s = clean(status, CAPS.status).toLowerCase();
+    if (!s) return mode !== "premod";
+    if (mode === "premod") return s === "live";
+    return s !== "hidden" && s !== "removed" && s !== "blocked";
   }
 
   function normalizeRow(raw, opts) {
     const o = opts || {};
     const mode = o.feedMode === "premod" ? "premod" : "postmod";
     if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
-    if (!statusVisible(raw.status, mode)) return null;
+    if (raw.status != null && raw.status !== "" && !statusVisible(raw.status, mode)) return null;
     const kind = clean(raw.kind || raw.type, 10).toLowerCase();
     if (kind !== "need" && kind !== "offer") return null;
     const category = clean(raw.category, CAPS.category).toLowerCase();
@@ -882,9 +852,9 @@ const SharedSheetFeed = (() => {
     const guard = ContentGuard.check(title, details, pay, khan, contact);
     if (!guard.ok) return null;
     const titles = PhaseA.titleFields(title);
-    const postId = clean(raw.post_id, CAPS.post_id).replace(/[^A-Za-z0-9_-]/g, "");
+    const postId = clean(raw.post_id || raw.id, CAPS.post_id).replace(/[^A-Za-z0-9_-]/g, "");
     if (!postId) return null;
-    const t0 = Date.parse(clean(raw.created_at || raw.timestamp, 40));
+    const t0 = Date.parse(clean(raw.received_at || raw.created_at || raw.timestamp, 40));
     const created_at = Number.isNaN(t0) ? (o.fallbackDate || new Date().toISOString()) : new Date(t0).toISOString();
     const g = {
       id: postId,
@@ -927,9 +897,16 @@ const SharedSheetFeed = (() => {
     return { gigs, dropped };
   }
 
-  function buildFormBody(cfg, gig) {
-    const params = new URLSearchParams();
-    const map = {
+  function normalizeFeedDocument(doc, opts) {
+    if (!doc || typeof doc !== "object") return { gigs: [], dropped: 0, updated_at: null };
+    const updated_at = clean(doc.updated_at, 40) || null;
+    const posts = Array.isArray(doc.posts) ? doc.posts : [];
+    const out = normalizeRows(posts, opts);
+    return { gigs: out.gigs, dropped: out.dropped, updated_at };
+  }
+
+  function gigFieldMap(gig) {
+    return {
       kind: gig.type,
       title: (gig.title_en || gig.title_km || "").slice(0, CAPS.title),
       details: String(gig.description || "").slice(0, CAPS.details),
@@ -940,27 +917,58 @@ const SharedSheetFeed = (() => {
       lang: PhaseA.hasKhmer(gig.title_km || gig.title_en) ? "km" : (gig.language === "km" ? "km" : "en"),
       post_id: String(gig.id || "").slice(0, CAPS.post_id),
     };
-    ENTRY_ORDER.forEach((k) => {
-      const entryId = cfg.ENTRY[k];
-      if (entryId) params.set(entryId, map[k] == null ? "" : String(map[k]));
-    });
-    return params.toString();
   }
 
-  async function submitToForm(cfg, gig) {
-    if (!canPost(cfg)) return { ok: false, reason: "unconfigured" };
-    const body = buildFormBody(cfg, gig);
-    try {
-      await fetch(cfg.FORM_ACTION_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body,
-      });
-      return { ok: true };
-    } catch (err) {
-      return { ok: false, reason: "network", error: err };
+  function buildLgppPostBody(gig, humanLine) {
+    const map = gigFieldMap(gig);
+    const human = humanLine || "This post will appear on the shared board after a moderator check (usually within ~15 minutes).";
+    const lines = [human, ""];
+    FIELD_ORDER.forEach((k) => lines.push(k + ": " + escapeField(map[k])));
+    return lines.join("\n");
+  }
+
+  function parseLgppPostBody(text) {
+    const raw = String(text || "").replace(/^\uFEFF/, "");
+    if (!raw.trim()) return { ok: false, reason: "empty" };
+    const fields = {};
+    raw.split(/\r?\n/).forEach((line) => {
+      const m = line.match(/^([a-z_]+):\s*(.*)$/i);
+      if (!m) return;
+      const key = m[1].toLowerCase();
+      if (!FIELD_ORDER.includes(key)) return;
+      if (!(key in fields)) fields[key] = unescapeField(m[2]);
+    });
+    for (const k of FIELD_ORDER) {
+      if (!(k in fields) || String(fields[k]).trim() === "") return { ok: false, reason: "missing:" + k };
     }
+    const g = normalizeRow(fields, { feedMode: "postmod" });
+    if (!g) return { ok: false, reason: "invalid" };
+    return {
+      ok: true,
+      post: {
+        post_id: g.id, kind: g.type, title: g.title_en || g.title_km, details: g.description,
+        khan: g.khan, pay: g.rate_text, category: g.category, contact: g.contact_url,
+        lang: g.language, received_at: g.created_at,
+      },
+    };
+  }
+
+  function buildMailto(cfg, gig) {
+    const email = submitEmail(cfg);
+    if (!email) return null;
+    const subject = "LGPP-POST " + String(gig.id || "");
+    const body = buildLgppPostBody(gig);
+    return {
+      subject,
+      body,
+      mailto: "mailto:" + encodeURIComponent(email) + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body),
+    };
+  }
+
+  function buildTelegramSubmit(cfg, gig) {
+    const bot = submitTelegramBot(cfg);
+    if (!bot) return null;
+    return { bot, url: "https://t.me/" + bot, body: buildLgppPostBody(gig) };
   }
 
   function cacheBust(url) {
@@ -971,11 +979,11 @@ const SharedSheetFeed = (() => {
   }
 
   return Object.freeze({
-    ENTRY_ORDER, MAX_ROWS, MAX_CHARS, CAPS,
-    emptyConfig, normalizeConfig, isConfigured, canPost,
-    parseCSV, csvToObjects, headerKey, clean, statusVisible,
-    parseBlocklist, normalizeRow, normalizeRows,
-    buildFormBody, submitToForm, cacheBust,
+    FIELD_ORDER, ENTRY_ORDER: FIELD_ORDER, MAX_ROWS, MAX_CHARS, CAPS,
+    emptyConfig, normalizeConfig, isConfigured, canPost, submitEmail, submitTelegramBot,
+    clean, escapeField, unescapeField, statusVisible,
+    normalizeRow, normalizeRows, normalizeFeedDocument,
+    buildLgppPostBody, parseLgppPostBody, buildMailto, buildTelegramSubmit, cacheBust,
   });
 })();
 /* SHARED_SHEET_FEED_END */
@@ -1621,11 +1629,12 @@ function renderFeed() {
     } else if (kind === "postFirst") {
       // Phase A: SAMPLE hidden + nothing local → ONE action only.
       // Phase B: shared board on → shared-feed-empty copy (still a single CTA button).
-      const sharedOn = sharedFeedEnabled();
-      title = sharedOn ? t("sharedFeedEmpty") : (feedType === "offer" ? t("emptyFirstOffer") : t("emptyFirstNeed"));
+      // Shared-board *posting* empty copy only when a submit channel is on; reading feed.json still works separately.
+      const sharedPosting = SharedSheetFeed.canPost(feedConfig);
+      title = sharedPosting ? t("sharedFeedEmpty") : (feedType === "offer" ? t("emptyFirstOffer") : t("emptyFirstNeed"));
       hint = "";
       ico = "📍";
-      const cta = sharedOn ? t("sharedFeedEmptyAction") : (feedType === "offer" ? t("postFirstOffer") : t("postFirstGig"));
+      const cta = sharedPosting ? t("sharedFeedEmptyAction") : (feedType === "offer" ? t("postFirstOffer") : t("postFirstGig"));
       action = `<button type="button" class="btn btn-primary" id="btn-post-first" data-post-type="${feedType === "offer" ? "offer" : "need"}" style="max-width:280px;margin:14px auto 0">${cta}</button>`;
     } else if (kind === "filter") {
       title = t("emptyFilter");
@@ -1725,31 +1734,93 @@ function closeDetail() {
   $("#browse-list-view").classList.remove("hidden");
 }
 
-function confirmExternal(appName, url) {
-  if (!ContactLinks.isAllowed(url)) {
+function isLeaveUrlAllowed(url, opts) {
+  if (ContactLinks.isAllowed(url)) return true;
+  const o = opts || {};
+  if (o.allowMailto && typeof url === "string" && /^mailto:[^\s]+$/i.test(url)) return true;
+  if (o.allowTelegramBot && typeof url === "string" && /^https:\/\/t\.me\/[A-Za-z0-9_]{5,32}$/.test(url)) return true;
+  return false;
+}
+
+function confirmExternal(appName, url, opts) {
+  const o = opts || {};
+  if (!ContactLinks.isAllowed(url) && !isLeaveUrlAllowed(url, o)) {
     toast(t("contactUrlBlocked"));
     return;
   }
-  const root = openModal(`<div class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
-    <div class="modal">
-      <h3 id="confirm-title">${t("contactConfirmTitle")}</h3>
-      <p>${tf("contactConfirmBody", { app: appName })}</p>
-      <div class="btn-row">
-        <button type="button" class="btn btn-secondary" id="modal-cancel" style="margin:0" aria-label="${t("confirmCancel")}">${t("confirmCancel")}</button>
-        <button type="button" class="btn btn-primary" id="modal-ok" style="margin:0" aria-label="${t("confirmContinue")}">${t("confirmContinue")}</button>
-      </div>
-    </div>
-  </div>`);
+  const root = openModal(`<div class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="confirm-title"><div class="modal"><h3 id="confirm-title">${t("contactConfirmTitle")}</h3><p>${tf("contactConfirmBody", { app: appName })}</p><div class="btn-row"><button type="button" class="btn btn-secondary" id="modal-cancel" style="margin:0">${t("confirmCancel")}</button><button type="button" class="btn btn-primary" id="modal-ok" style="margin:0">${t("confirmContinue")}</button></div></div></div>`);
   if (!root) return;
   $("#modal-cancel").addEventListener("click", dismissModal);
   $("#modal-ok").addEventListener("click", () => {
     dismissModal();
-    if (!ContactLinks.isAllowed(url)) {
+    if (!ContactLinks.isAllowed(url) && !isLeaveUrlAllowed(url, o)) {
       toast(t("contactUrlBlocked"));
       return;
     }
     window.open(url, "_blank", "noopener");
   });
+}
+
+
+function copyTextFallback(text, okKey, failKey) {
+  const done = () => toast(t(okKey || "copyLgppBodyOk"));
+  const fail = () => toast(t(failKey || "copyLgppBodyFail"));
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(done).catch(fail);
+  } else {
+    try {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.setAttribute("readonly", "");
+      ta.style.position = "fixed";
+      ta.style.left = "-9999px";
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy") ? done() : fail();
+      document.body.removeChild(ta);
+    } catch (_) { fail(); }
+  }
+}
+
+/** After local save: optional shared-board send (email and/or Telegram bot). Hidden when both configs empty. */
+function offerSendToSharedBoard(gig) {
+  if (!SharedSheetFeed.canPost(feedConfig) || !gig) return;
+  const mail = SharedSheetFeed.buildMailto(feedConfig, gig);
+  const tg = SharedSheetFeed.buildTelegramSubmit(feedConfig, gig);
+  const body = (mail && mail.body) || (tg && tg.body) || SharedSheetFeed.buildLgppPostBody(gig);
+  const actions = [];
+  if (mail) actions.push(`<button type="button" class="btn btn-primary" id="btn-shared-email" style="margin:0">${escapeHtml(t("sendToSharedBoardEmail"))}</button>`);
+  if (tg) actions.push(`<button type="button" class="btn btn-primary" id="btn-shared-tg" style="margin:0">${escapeHtml(t("sendToSharedBoardTelegram"))}</button>`);
+  actions.push(`<button type="button" class="btn btn-secondary" id="btn-shared-copy" style="margin:0">${escapeHtml(t("copyLgppBody"))}</button>`);
+  actions.push(`<button type="button" class="btn btn-ghost" id="btn-shared-skip" style="margin:0">${escapeHtml(t("sendToSharedBoardSkip"))}</button>`);
+  const root = openModal(`<div class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="shared-send-title">
+    <div class="modal">
+      <h3 id="shared-send-title">${escapeHtml(t("sendToSharedBoard"))}</h3>
+      <p class="muted small">${escapeHtml(t("sendToSharedBoardHint"))}</p>
+      <div class="btn-row" style="flex-wrap:wrap">${actions.join("")}</div>
+    </div>
+  </div>`);
+  if (!root) return;
+  const skip = $("#btn-shared-skip");
+  if (skip) skip.addEventListener("click", dismissModal);
+  const copyBtn = $("#btn-shared-copy");
+  if (copyBtn) copyBtn.addEventListener("click", () => copyTextFallback(body));
+  const emailBtn = $("#btn-shared-email");
+  if (emailBtn && mail) {
+    emailBtn.addEventListener("click", () => {
+      dismissModal();
+      copyTextFallback(body); // plain-text fallback if mailto fails to open
+      confirmExternal(t("sharedBoardMailApp"), mail.mailto, { allowMailto: true });
+    });
+  }
+  const tgBtn = $("#btn-shared-tg");
+  if (tgBtn && tg) {
+    tgBtn.addEventListener("click", () => {
+      dismissModal();
+      copyTextFallback(body);
+      confirmExternal(t("sharedBoardTelegramApp"), tg.url, { allowTelegramBot: true });
+    });
+  }
 }
 
 
@@ -2121,14 +2192,9 @@ async function handlePostGig(e) {
         if (chip) chip.remove();
       });
     }, PhaseA.JUST_POSTED_MS);
-    let sharedOk = false;
-    if (SharedSheetFeed.canPost(feedConfig)) {
-      const sub = await SharedSheetFeed.submitToForm(feedConfig, gig);
-      sharedOk = !!(sub && sub.ok);
-    }
     setSubmitBusy(form, false);
     resetWizard();
-    toast(sharedOk ? t("postedOkShared") : t("postedOk"));
+    toast(t("postedOk"));
     selectedId = null;
     feedType = gig.type;
     filters = { category: "", khan: "", language: "" };
@@ -2136,6 +2202,8 @@ async function handlePostGig(e) {
     switchMainTab("browse");
     setFeedType(gig.type);
     window.scrollTo({ top: 0 });
+    // Shared-board submit is opt-in and OFF unless SUBMIT_EMAIL or SUBMIT_TELEGRAM_BOT is set.
+    if (SharedSheetFeed.canPost(feedConfig)) offerSendToSharedBoard(gig);
   } finally {
     if (formBusy) setSubmitBusy(form, false);
   }
@@ -2371,25 +2439,19 @@ async function loadSharedFeed(opts = {}) {
   sharedFeedState = "loading";
   renderSharedFeedStatus();
   if (!quiet) renderFeed();
-  let blocklist = null;
   try {
-    if (feedConfig.BLOCKLIST_CSV_URL) {
-      const br = await fetch(SharedSheetFeed.cacheBust(feedConfig.BLOCKLIST_CSV_URL), { cache: "no-store" });
-      if (br.ok) blocklist = SharedSheetFeed.parseBlocklist(await br.text());
-    }
-  } catch (_) { /* optional */ }
-  try {
-    const res = await fetch(SharedSheetFeed.cacheBust(feedConfig.SHEET_CSV_URL), { cache: "no-store" });
-    if (!res.ok) throw new Error("sheet fetch failed");
+    const res = await fetch(SharedSheetFeed.cacheBust(feedConfig.FEED_JSON_URL), { cache: "no-store" });
+    if (!res.ok) throw new Error("feed.json fetch failed");
     const text = await res.text();
     if (text.length > SharedSheetFeed.MAX_CHARS) throw new Error("feed too large");
-    const objects = SharedSheetFeed.csvToObjects(text);
-    const out = SharedSheetFeed.normalizeRows(objects, { feedMode: feedConfig.FEED_MODE, blocklist });
+    const doc = JSON.parse(text);
+    const out = SharedSheetFeed.normalizeFeedDocument(doc, { feedMode: feedConfig.FEED_MODE });
     sharedGigs = out.gigs;
-    sharedFeedFetchedAt = new Date().toISOString();
+    sharedFeedFetchedAt = out.updated_at || new Date().toISOString();
     sharedFeedState = "ok";
     SafeStorage.setJSON(LS_SHARED_FEED, {
       fetched_at: sharedFeedFetchedAt,
+      updated_at: out.updated_at,
       gigs: sharedGigs,
       mode: feedConfig.FEED_MODE,
     });
@@ -2398,7 +2460,7 @@ async function loadSharedFeed(opts = {}) {
     const cache = SafeStorage.getJSON(LS_SHARED_FEED, null);
     if (cache && Array.isArray(cache.gigs) && cache.gigs.length) {
       sharedGigs = cache.gigs;
-      sharedFeedFetchedAt = cache.fetched_at || null;
+      sharedFeedFetchedAt = cache.updated_at || cache.fetched_at || null;
       sharedFeedState = navigator.onLine ? "error" : "offline";
     } else {
       sharedGigs = [];
