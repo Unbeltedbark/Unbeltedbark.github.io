@@ -1,5 +1,5 @@
-/* Local Gigs PP — shell cache v0.14 — Phase B: shared feed.json + Pages host prep */
-const CACHE = "gig-agg-v0.14-phase-b";
+/* Local Gigs PP — shell cache v0.14.2 — cyan polish wave */
+const CACHE = "gig-agg-v0.14.2-cyan-p";
 const ASSETS = [
   "./",
   "./index.html",

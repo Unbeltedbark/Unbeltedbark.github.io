@@ -1,7 +1,7 @@
 {
   "id": "./",
-  "name": "Local Gigs Phnom Penh",
-  "short_name": "Gigs PP",
+  "name": "Local Gigs PP",
+  "short_name": "Local Gigs PP",
   "description": "Browse and post short local gigs in Phnom Penh. Contact on Telegram. No escrow or wallets.",
   "start_url": "./index.html",
   "scope": "./",
@@ -11,7 +11,10 @@
   "theme_color": "#0e1116",
   "lang": "en",
   "dir": "ltr",
-  "categories": ["lifestyle", "business"],
+  "categories": [
+    "lifestyle",
+    "business"
+  ],
   "icons": [
     {
       "src": "icons/icon-192.png",
