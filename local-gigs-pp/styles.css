@@ -1,3 +1,18 @@
+@font-face {
+  font-family: "Noto Sans Khmer";
+  src: url("./fonts/NotoSansKhmer-Regular.ttf") format("truetype");
+  font-weight: 400 650;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Noto Sans Khmer";
+  src: url("./fonts/NotoSansKhmer-Bold.ttf") format("truetype");
+  font-weight: 700 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --bg: #0a0d12;
   --bg-glow: #121820;
@@ -44,6 +59,12 @@ body {
   line-height: 1.5;
   padding-bottom: calc(78px + var(--safe-bottom));
   -webkit-font-smoothing: antialiased;
+}
+
+/* Buttons must inherit app font — UA stylesheet otherwise forces Arial and breaks KM */
+button, .btn, .star-btn, .link-btn, .offline-retry, .offline-dismiss,
+.type-tabs button, .tab-bar button, .lang-toggle button, select, input, textarea {
+  font-family: inherit;
 }
 :focus-visible {
   outline: 2px solid var(--accent-hot);
@@ -592,7 +613,25 @@ a { color: var(--accent2); }
   padding: 8px 12px;
   width: auto;
 }
-.star-btn .star-label { font-size: 0.78rem; }
+.star-btn .star-glyph {
+  font-family: "Segoe UI Symbol", "Apple Color Emoji", "Noto Sans Symbols", sans-serif;
+  flex-shrink: 0;
+}
+.star-btn .star-label {
+  font-size: 0.78rem;
+  font-family: "Noto Sans Khmer", var(--font);
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 1.35;
+  font-synthesis: none;
+}
+html[lang="km"] .star-btn.detail-star {
+  gap: 6px;
+  max-width: 100%;
+}
+html[lang="km"] .star-btn .star-label {
+  font-size: 0.8rem;
+}
 .detail-top-row {
   display: flex;
   justify-content: space-between;
@@ -1330,3 +1369,95 @@ body.gate-open { overflow: hidden; }
   font-weight: 650;
 }
 
+/* ===== Cyan Khmer chrome visual — readable KM, no tofu, calm empty/offline ===== */
+
+/* Lang toggle: room for ខ្មែរ */
+.lang-toggle button {
+  min-width: 3.2rem;
+  padding: 0 10px;
+  font-size: 0.78rem;
+  letter-spacing: 0;
+}
+
+/* When UI is Khmer: more leading, wrap dense chrome */
+html[lang="km"] body {
+  line-height: 1.65;
+}
+html[lang="km"] .type-tabs button {
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.35;
+  padding: 8px 4px;
+  white-space: normal;
+}
+html[lang="km"] .filters label {
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+html[lang="km"] .filters select {
+  font-size: 0.88rem;
+  line-height: 1.4;
+}
+html[lang="km"] .shared-feed-status {
+  font-size: 0.76rem;
+  line-height: 1.45;
+  padding: 8px 12px;
+}
+html[lang="km"] .demo-row {
+  font-size: 0.74rem;
+  line-height: 1.4;
+  flex-wrap: wrap;
+}
+html[lang="km"] .feed-meta-row .feed-count {
+  font-size: 0.82rem;
+}
+html[lang="km"] .offline-banner-text {
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+html[lang="km"] .state-box.soft-launch-empty .title {
+  font-size: 1.05rem;
+  line-height: 1.4;
+}
+html[lang="km"] .state-box.soft-launch-empty p {
+  font-size: 0.86rem;
+  line-height: 1.55;
+  max-width: 24rem;
+}
+html[lang="km"] .state-box.soft-launch-empty .btn {
+  font-size: 0.92rem;
+  line-height: 1.35;
+  white-space: normal;
+  padding: 10px 14px;
+}
+html[lang="km"] .tab-bar button {
+  font-size: 0.64rem;
+  line-height: 1.25;
+}
+html[lang="km"] .first-open-text {
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+html[lang="km"] .loading-box.shared-loading {
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+html[lang="km"] .wiz-step legend,
+html[lang="km"] .field-label,
+html[lang="km"] .wiz-step label {
+  line-height: 1.45;
+}
+html[lang="km"] .wiz-nav .btn {
+  font-size: 0.9rem;
+  white-space: normal;
+  line-height: 1.3;
+}
+html[lang="km"] .contact-bar .btn {
+  font-size: 0.88rem;
+  white-space: normal;
+  line-height: 1.3;
+}
+html[lang="km"] .app-header .sub {
+  line-height: 1.4;
+  font-size: 0.72rem;
+}
