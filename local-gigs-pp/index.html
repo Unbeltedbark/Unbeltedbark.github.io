@@ -34,9 +34,16 @@
         <div class="sub" data-i18n="appSub">Phnom Penh short gigs · off-app chat</div>
       </div>
     </div>
-    <div class="lang-toggle" role="group" data-i18n-aria="ariaLangToggle" aria-label="Language">
-      <button type="button" data-lang="en" class="active" aria-label="English" aria-pressed="true">EN</button>
-      <button type="button" data-lang="km" aria-label="Khmer" aria-pressed="false">ខ្មែរ</button>
+    <div class="lang-picker-wrap">
+      <div class="lang-toggle" role="group" data-i18n-aria="ariaLangToggle" aria-label="Language" data-cyan-handoff="language-picker">
+        <button type="button" data-lang="en" class="active" aria-label="English" aria-pressed="true">EN</button>
+        <button type="button" data-lang="km" aria-label="Khmer" aria-pressed="false">ខ្មែរ</button>
+        <button type="button" data-lang="zh" data-stub="1" aria-label="Chinese (chrome falls back to English)" aria-pressed="false" title="Chrome falls back to EN until native pass">中文</button>
+        <button type="button" data-lang="ru" data-stub="1" aria-label="Russian (chrome falls back to English)" aria-pressed="false" title="Chrome falls back to EN until native pass">RU</button>
+        <button type="button" data-lang="ja" data-stub="1" aria-label="Japanese (chrome falls back to English)" aria-pressed="false" title="Chrome falls back to EN until native pass">日本語</button>
+        <button type="button" data-lang="ko" data-stub="1" aria-label="Korean (chrome falls back to English)" aria-pressed="false" title="Chrome falls back to EN until native pass">한국어</button>
+      </div>
+      <p id="lang-stub-note" class="lang-stub-note hidden" data-i18n="i18nStubNote" aria-live="polite">ZH / RU / JA / KO chrome falls back to English until a native pass (no machine-fill).</p>
     </div>
   </header>
 
@@ -68,6 +75,32 @@
               <select id="filter-lang"></select>
             </div>
           </div>
+          <details class="filters-more" id="filters-more">
+            <summary data-i18n="filterMore">More filters</summary>
+            <div class="filters filters-extra" data-cyan-handoff="filter-extra">
+              <div>
+                <label for="filter-tags" data-i18n="filterTags">Tags</label>
+                <input id="filter-tags" type="search" maxlength="40" autocomplete="off" placeholder="tutoring" />
+              </div>
+              <div>
+                <label for="filter-date-after" data-i18n="filterDateAfter">Posted after</label>
+                <input id="filter-date-after" type="date" />
+              </div>
+              <div>
+                <label for="filter-date-before" data-i18n="filterDateBefore">Posted before</label>
+                <input id="filter-date-before" type="date" />
+              </div>
+              <div>
+                <label for="filter-value-offered" data-i18n="filterValueOffered">Value offered</label>
+                <input id="filter-value-offered" type="search" maxlength="40" autocomplete="off" placeholder="$8" />
+              </div>
+              <div>
+                <label for="filter-value-demanded" data-i18n="filterValueDemanded">Value demanded</label>
+                <input id="filter-value-demanded" type="search" maxlength="40" autocomplete="off" placeholder="$10" />
+              </div>
+            </div>
+          </details>
+          <div id="filter-chips" class="filter-chips is-empty" data-cyan-handoff="filter-chips" aria-live="polite"></div>
         </div>
 
         <p id="shared-feed-status" class="shared-feed-status hidden" role="status" aria-live="polite"></p>
@@ -127,6 +160,11 @@
 
             <label for="post-desc" data-i18n="fieldDetailsOpt">Details (optional)</label>
             <textarea id="post-desc" maxlength="800" data-i18n-placeholder="phDetails"></textarea>
+
+            <label for="post-lang" data-i18n="postLang">Post language</label>
+            <select id="post-lang"></select>
+            <p class="field-hint" data-i18n="postLangHint">Declare the language of this post. Script detect is a hint only — not 100% accurate.</p>
+            <p id="post-lang-detect" class="field-hint hidden" aria-live="polite"></p>
           </fieldset>
 
           <fieldset class="wiz-step hidden" data-step="3">
@@ -207,7 +245,7 @@
           <p id="hidden-count" class="muted small">0 hidden</p>
           <button type="button" class="btn btn-secondary" id="btn-clear-hidden" data-i18n="clearHidden" aria-label="Clear all hidden gigs on this device">Clear hidden</button>
         </div>
-        <p id="app-version-stamp" class="version-stamp muted" aria-label="App version">v0.14.5</p>
+        <p id="app-version-stamp" class="version-stamp muted" aria-label="App version">v0.14.6-cyan</p>
       </div>
     </section>
   </main>
