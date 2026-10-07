@@ -1,10 +1,10 @@
-/* Local Gig Aggregator v0.14.5 — Khmer chrome polish + offline empty/retry honesty on polish-wave + Phase B: shared feed.json + optional mailto/Telegram submit + Pages host.
+/* Local Gig Aggregator v0.14.6-cyan — Cyan language picker + removable filter chips on i18n-6 spike. Prior: v0.14.6-spike foundation.
    Phase A: clearer cards, 4-step post wizard, safe contact links.
    Pack 14: path reliability (post/browse/contact).
    Pack 13: modal fix, safe storage, reserved slots, content guard, terms gate.
    Seeded JSON + localStorage + optional shared Sheet. No escrow / dispatch / wallets. No ad / billing SDKs.
 */
-const APP_VERSION = "v0.14.5";
+const APP_VERSION = "v0.14.6-cyan";
 /** Bump when terms.html changes materially — users re-accept on next open. */
 const TERMS_VERSION = "2026-10-05";
 
@@ -46,6 +46,144 @@ const KHANS = [
   "BKK1", "Toul Tom Poung", "Tuol Kork", "Mean Chey",
   "Chamkar Mon", "Chroy Changvar", "Other",
 ];
+
+/** UI / post locales — Reed i18n-6. Missing chrome strings fall back to EN (no machine-fill). */
+const LOCALES = Object.freeze(["en", "km", "zh", "ru", "ja", "ko"]);
+const LOCALE_LABELS = Object.freeze({
+  "en": { en: "English", native: "EN" },
+  "km": { en: "Khmer", native: "ខ្មែរ" },
+  "zh": { en: "Chinese", native: "中文" },
+  "ru": { en: "Russian", native: "RU" },
+  "ja": { en: "Japanese", native: "日本語" },
+  "ko": { en: "Korean", native: "한국어" },
+});
+
+/** Script hint for post language — never claim 100% accuracy (JA↔ZH Han overlap). */
+const LangDetect = Object.freeze({
+  isLocale(x) { return LOCALES.includes(x); },
+  /** Best-effort script hint or null. */
+  detectHint(text) {
+    const s = String(text || "");
+    if (/[\u1780-\u17FF]/.test(s)) return "km";
+    if (/[\u0400-\u04FF]/.test(s)) return "ru";
+    if (/[\uAC00-\uD7AF\u1100-\u11FF]/.test(s)) return "ko";
+    if (/[\u3040-\u30FF]/.test(s)) return "ja"; // kana → Japanese
+    if (/[\u4E00-\u9FFF]/.test(s)) return "zh"; // Han without kana → Chinese hint (may be JA)
+    if (/[A-Za-z]{3,}/.test(s)) return "en";
+    return null;
+  },
+  /** Prefer declared locale; else script hint; else UI locale; else en. */
+  resolvePostLang({ declared, text, uiLocale }) {
+    if (declared && LOCALES.includes(declared)) return declared;
+    const hint = LangDetect.detectHint(text);
+    if (hint) return hint;
+    if (uiLocale && LOCALES.includes(uiLocale)) return uiLocale;
+    return "en";
+  },
+  /** Map legacy bilingual field (en/km/both) → primary ISO lang tag. */
+  fromLegacy(language) {
+    if (language === "km") return "km";
+    return "en";
+  },
+  ensureGigLang(g) {
+    if (!g || typeof g !== "object") return g;
+    if (g.lang && LOCALES.includes(g.lang)) return g;
+    return { ...g, lang: LangDetect.fromLegacy(g.language) };
+  },
+});
+
+/**
+ * Stackable browse filters (AND). Cyan styles #filter-chips; helpers are the contract.
+ * Shared-board posting stays OFF — filters only apply to local + SAMPLE + published feed rows.
+ */
+const FilterModel = Object.freeze({
+  empty() {
+    return {
+      category: "",
+      khan: "",
+      language: "", // legacy en/km/both (SAMPLE bilingual)
+      lang: "", // ISO post lang en|km|zh|ru|ja|ko
+      tags: [], // category id and/or free tags
+      postedAfter: "", // YYYY-MM-DD inclusive
+      postedBefore: "",
+      valueOffered: "", // substring on offer rate/title
+      valueDemanded: "", // substring on need rate/title
+    };
+  },
+  isActive(f) {
+    if (!f) return false;
+    return !!(
+      f.category || f.khan || f.language || f.lang ||
+      (f.tags && f.tags.length) ||
+      f.postedAfter || f.postedBefore ||
+      f.valueOffered || f.valueDemanded
+    );
+  },
+  gigTags(g) {
+    const tags = [];
+    if (g && g.category) tags.push(String(g.category));
+    if (g && Array.isArray(g.tags)) {
+      g.tags.forEach((t) => {
+        const s = String(t || "").trim().toLowerCase();
+        if (s && !tags.includes(s)) tags.push(s);
+      });
+    }
+    return tags;
+  },
+  dateDay(iso) {
+    const t = Date.parse(iso || "");
+    if (Number.isNaN(t)) return "";
+    return new Date(t).toISOString().slice(0, 10);
+  },
+  hay(g) {
+    return [g.rate_text, g.title_en, g.title_km, g.description].map((x) => String(x || "").toLowerCase()).join(" ");
+  },
+  matches(g, f) {
+    if (!f) return true;
+    const gig = LangDetect.ensureGigLang(g);
+    if (f.category && gig.category !== f.category) return false;
+    if (f.khan && gig.khan !== f.khan) return false;
+    if (f.language) {
+      if (f.language === "both") {
+        if (gig.language !== "both") return false;
+      } else if (!(gig.language === f.language || gig.language === "both")) {
+        return false;
+      }
+    }
+    if (f.lang) {
+      const gl = gig.lang;
+      const bilingualOk = gig.language === "both" && (f.lang === "en" || f.lang === "km");
+      if (gl !== f.lang && !bilingualOk) return false;
+    }
+    if (f.tags && f.tags.length) {
+      const have = FilterModel.gigTags(gig);
+      for (const tag of f.tags) {
+        if (!have.includes(String(tag).toLowerCase())) return false;
+      }
+    }
+    if (f.postedAfter || f.postedBefore) {
+      const day = FilterModel.dateDay(gig.created_at);
+      if (!day) return false;
+      if (f.postedAfter && day < f.postedAfter) return false;
+      if (f.postedBefore && day > f.postedBefore) return false;
+    }
+    if (f.valueOffered) {
+      const q = String(f.valueOffered).trim().toLowerCase();
+      if (q) {
+        if (gig.type !== "offer") return false;
+        if (!FilterModel.hay(gig).includes(q)) return false;
+      }
+    }
+    if (f.valueDemanded) {
+      const q = String(f.valueDemanded).trim().toLowerCase();
+      if (q) {
+        if (gig.type !== "need") return false;
+        if (!FilterModel.hay(gig).includes(q)) return false;
+      }
+    }
+    return true;
+  },
+});
 
 const I18N = {
   en: {
@@ -292,6 +430,26 @@ const I18N = {
     ariaPanelSafety: "Safety",
     ariaHiddenMgmt: "Hidden gigs on this device",
     labelSep: ": ",
+    langZh: "Chinese",
+    langRu: "Russian",
+    langJa: "Japanese",
+    langKo: "Korean",
+    filterTags: "Tags",
+    filterDateAfter: "Posted after",
+    filterDateBefore: "Posted before",
+    filterValueOffered: "Value offered",
+    filterValueDemanded: "Value demanded",
+    filterMore: "More filters",
+    postLang: "Post language",
+    postLangHint: "Declare the language of this post. Script detect is a hint only — not 100% accurate.",
+    postLangDetect: "Detected hint: {lang}",
+    filterChipsEmpty: "No extra filters",
+    i18nStubNote: "ZH / RU / JA / KO chrome falls back to English until a native pass (no machine-fill).",
+    removeFilter: "Remove filter",
+    filterChipLang: "Lang",
+    filterChipTag: "Tag",
+    filterChipAfter: "After",
+    filterChipBefore: "Before",
   },
   km: {
     appTitle: "ការងារខ្លី ភ្នំពេញ",
@@ -434,7 +592,7 @@ const I18N = {
     hideGig: "មិនចាប់អារម្មណ៍ · លាក់លើទូរស័ព្ទនេះ",
     hideGigToast: "បានលាក់លើទូរស័ព្ទនេះ",
     hideGigHint: "នឹងមិនបង្ហាញម្តងទៀតលើទូរស័ព្ទនេះ។ ខុសពី ★ រក្សាទុក។ សម្អាតទិន្នន័យគេហទំព័រដើម្បីកំណត់ឡើងវិញ។",
-        ariaHideGig: "លាក់ការងារនេះលើទូរស័ព្ទនេះ",
+    ariaHideGig: "លាក់ការងារនេះលើទូរស័ព្ទនេះ",
     detailNotFound: "រកមិនឃើញការផ្សាយ។",
     hiddenMgmtTitle: "បានលាក់លើទូរស័ព្ទនេះ",
     hiddenMgmtCount: "បានលាក់ {n}",
@@ -537,7 +695,32 @@ const I18N = {
     ariaPanelSafety: "សុវត្ថិភាព",
     ariaHiddenMgmt: "ការងារដែលលាក់លើទូរស័ព្ទនេះ",
     labelSep: "៖ ",
+    langZh: "ចិន",
+    langRu: "រុស្ស៊ី",
+    langJa: "ជប៉ុន",
+    langKo: "កូរ៉េ",
+    filterTags: "ស្លាក",
+    filterDateAfter: "ផ្សាយក្រោយ",
+    filterDateBefore: "ផ្សាយមុន",
+    filterValueOffered: "តម្លៃផ្តល់",
+    filterValueDemanded: "តម្លៃស្នើ",
+    filterMore: "តម្រងបន្ថែម",
+    postLang: "ភាសាផ្សាយ",
+    postLangHint: "ជ្រើសភាសានៃការផ្សាយ។ ការចាប់ស្គ្រីបគឺជាគន្លឹះតែប៉ុណ្ណោះ — មិនមែនត្រឹមត្រូវ ១០០%។",
+    postLangDetect: "គន្លឹះរកឃើញ៖ {lang}",
+    filterChipsEmpty: "គ្មានតម្រងបន្ថែម",
+    i18nStubNote: "ZH / RU / JA / KO ប្រើអង់គ្លេសជាបណ្តោះអាសន្ន រហូតមានការបកប្រែពិត (គ្មានបកប្រែស្វ័យប្រវត្តិ).",
+    removeFilter: "លុបតម្រង",
+    filterChipLang: "ភាសា",
+    filterChipTag: "ស្លាក",
+    filterChipAfter: "ក្រោយ",
+    filterChipBefore: "មុន",
   },
+  // Stub locales — empty objects → t() falls back to EN. Full chrome is a later wave (no machine-fill).
+  zh: {},
+  ru: {},
+  ja: {},
+  ko: {},
 };
 
 const LS_POSTS = "gigAgg.localPosts";
@@ -873,7 +1056,9 @@ const SharedSheetFeed = (() => {
     const khanRaw = clean(raw.khan, CAPS.khan);
     const khan = KHANS.includes(khanRaw) ? khanRaw : (khanRaw || "Other");
     const langRaw = clean(raw.lang, CAPS.lang).toLowerCase();
-    const language = langRaw === "km" ? "km" : "en";
+    // Keep self-contained for phase_b_check eval (no outer LOCALES dep).
+    const postLang = /^(en|km|zh|ru|ja|ko)$/.test(langRaw) ? langRaw : (langRaw === "kh" ? "km" : "en");
+    const language = postLang === "km" ? "km" : "en";
     let contact = clean(raw.contact, CAPS.contact);
     if (!ContactLinks.isAllowed(contact)) {
       const n = ContactLinks.normalize(contact);
@@ -904,6 +1089,8 @@ const SharedSheetFeed = (() => {
       phone: "",
       khqr_image_url: "",
       language,
+      lang: postLang,
+      tags: category ? [category] : [],
       status: "live",
       created_at,
       created_by: "shared",
@@ -946,7 +1133,7 @@ const SharedSheetFeed = (() => {
       pay: String(gig.rate_text || "").slice(0, CAPS.pay),
       category: String(gig.category || "").slice(0, CAPS.category),
       contact: String(gig.contact_url || "").slice(0, CAPS.contact),
-      lang: PhaseA.hasKhmer(gig.title_km || gig.title_en) ? "km" : (gig.language === "km" ? "km" : "en"),
+      lang: gig.lang || (PhaseA.hasKhmer(gig.title_km || gig.title_en) ? "km" : (gig.language === "km" ? "km" : "en")),
       post_id: String(gig.id || "").slice(0, CAPS.post_id),
     };
   }
@@ -980,7 +1167,7 @@ const SharedSheetFeed = (() => {
       post: {
         post_id: g.id, kind: g.type, title: g.title_en || g.title_km, details: g.description,
         khan: g.khan, pay: g.rate_text, category: g.category, contact: g.contact_url,
-        lang: g.language, received_at: g.created_at,
+        lang: g.lang || g.language, received_at: g.created_at,
       },
     };
   }
@@ -1052,12 +1239,15 @@ function initHideDemo() {
   return raw === "1";
 }
 
-let lang = lsGet(LS_LANG) || "en";
+let lang = (() => {
+  const stored = lsGet(LS_LANG) || "en";
+  return LangDetect.isLocale(stored) ? stored : "en";
+})();
 let seedGigs = [];
 let sharedGigs = [];
 let feedConfig = SharedSheetFeed.emptyConfig();
 let feedType = "need";
-let filters = { category: "", khan: "", language: "" };
+let filters = FilterModel.empty();
 let offlineDismissed = false;
 let selectedId = null;
 let seedLoadState = "loading"; // loading | ok | error
@@ -1478,8 +1668,17 @@ function applyI18n() {
     const on = b.dataset.lang === lang;
     b.classList.toggle("active", on);
     b.setAttribute("aria-pressed", on ? "true" : "false");
+    if (b.dataset.stub === "1") {
+      b.title = t("i18nStubNote");
+    }
   });
-  document.documentElement.lang = lang === "km" ? "km" : "en";
+  const stubNote = $("#lang-stub-note");
+  if (stubNote) {
+    const stub = lang !== "en" && lang !== "km";
+    stubNote.classList.toggle("hidden", !stub);
+    stubNote.textContent = t("i18nStubNote");
+  }
+  document.documentElement.lang = LangDetect.isLocale(lang) ? lang : "en";
   const stamp = $("#app-version-stamp");
   if (stamp) stamp.textContent = tf("versionStamp", { v: APP_VERSION });
   renderFirstOpen();
@@ -1492,6 +1691,7 @@ function applyI18n() {
   fillSelects();
   if (token !== langApplyToken) return; // superseded by a faster toggle
   renderDemoBar();
+  renderFilterChips();
   renderFeed();
   renderSharedFeedStatus();
   renderMine();
@@ -1504,7 +1704,7 @@ function applyI18n() {
 }
 
 function setLang(next) {
-  if (next !== "en" && next !== "km") return;
+  if (!LangDetect.isLocale(next)) return;
   if (next === lang) return; // no-op — avoids redundant re-render races
   lang = next;
   lsSet(LS_LANG, lang);
@@ -1526,6 +1726,10 @@ function fillSelects() {
     `<option value="">${t("all")}</option>`,
     `<option value="en">${t("langEn")}</option>`,
     `<option value="km">${t("langKm")}</option>`,
+    `<option value="zh">${t("langZh")}</option>`,
+    `<option value="ru">${t("langRu")}</option>`,
+    `<option value="ja">${t("langJa")}</option>`,
+    `<option value="ko">${t("langKo")}</option>`,
     `<option value="both">${t("langBoth")}</option>`,
   ].join("");
 
@@ -1553,6 +1757,18 @@ function fillSelects() {
     fl.innerHTML = langOpts;
     if ([...fl.options].some((o) => o.value === prev)) fl.value = prev;
   }
+  const pl = $("#post-lang");
+  if (pl) {
+    const prev = pl.value;
+    const postLangOpts = LOCALES.map((code) => {
+      const lab = LOCALE_LABELS[code];
+      const name = t({ en: "langEn", km: "langKm", zh: "langZh", ru: "langRu", ja: "langJa", ko: "langKo" }[code]);
+      return `<option value="${code}">${lab.native} · ${name}</option>`;
+    }).join("");
+    pl.innerHTML = postLangOpts;
+    const want = prev || (LangDetect.isLocale(lang) ? lang : "en");
+    if ([...pl.options].some((o) => o.value === want)) pl.value = want;
+  }
   const pk = $("#post-khan");
   if (pk) {
     const prev = pk.value;
@@ -1569,10 +1785,118 @@ function lastKhan() {
   return KHANS.includes(k) ? k : "";
 }
 
+
+/** Cyan handoff: removable stackable filter chips (FilterModel keys). */
+function renderFilterChips() {
+  const root = $("#filter-chips");
+  if (!root) return;
+  const chips = [];
+  const push = (key, label, kind) => {
+    if (!label) return;
+    chips.push({ key, label: String(label), kind });
+  };
+  if (filters.category) push("category", catLabel(filters.category), "cat");
+  if (filters.khan) push("khan", khanLabel(filters.khan), "khan");
+  if (filters.lang) {
+    const lab = LOCALE_LABELS[filters.lang];
+    push("lang", (lab ? lab.native : filters.lang), "lang");
+  }
+  if (filters.language === "both") push("language", t("langBoth"), "lang");
+  if (filters.tags && filters.tags.length) {
+    push("tags", t("filterChipTag") + t("labelSep") + filters.tags.join(", "), "tag");
+  }
+  if (filters.postedAfter) push("postedAfter", t("filterChipAfter") + " " + filters.postedAfter, "date");
+  if (filters.postedBefore) push("postedBefore", t("filterChipBefore") + " " + filters.postedBefore, "date");
+  if (filters.valueOffered) {
+    push("valueOffered", t("filterValueOffered") + t("labelSep") + filters.valueOffered, "value");
+  }
+  if (filters.valueDemanded) {
+    push("valueDemanded", t("filterValueDemanded") + t("labelSep") + filters.valueDemanded, "value");
+  }
+  root.dataset.cyanHandoff = "filter-chips";
+  const more = $("#filters-more");
+  const extraOn = !!(filters.tags && filters.tags.length) || filters.postedAfter || filters.postedBefore || filters.valueOffered || filters.valueDemanded;
+  if (more && extraOn) more.open = true;
+  if (!chips.length) {
+    root.textContent = "";
+    root.classList.add("is-empty");
+    root.removeAttribute("aria-label");
+    return;
+  }
+  root.classList.remove("is-empty");
+  root.setAttribute("aria-label", t("filterMore"));
+  root.innerHTML = chips.map(({ key, label, kind }) => {
+    const aria = escapeHtml(t("removeFilter") + t("labelSep") + label);
+    return `<button type="button" class="filter-chip filter-chip--${kind}" data-clear="${escapeHtml(key)}" aria-label="${aria}"><span class="filter-chip-label">${escapeHtml(label)}</span><span class="filter-chip-x" aria-hidden="true">×</span></button>`;
+  }).join("");
+}
+
+/** Clear one FilterModel field + sync its control (chip ×). */
+function clearOneFilter(key) {
+  const sync = (sel, val) => { const el = $(sel); if (el) el.value = val; };
+  switch (key) {
+    case "category":
+      filters.category = "";
+      sync("#filter-cat", "");
+      break;
+    case "khan":
+      filters.khan = "";
+      sync("#filter-khan", "");
+      break;
+    case "lang":
+    case "language":
+      filters.lang = "";
+      filters.language = "";
+      sync("#filter-lang", "");
+      break;
+    case "tags":
+      filters.tags = [];
+      sync("#filter-tags", "");
+      break;
+    case "postedAfter":
+      filters.postedAfter = "";
+      sync("#filter-date-after", "");
+      break;
+    case "postedBefore":
+      filters.postedBefore = "";
+      sync("#filter-date-before", "");
+      break;
+    case "valueOffered":
+      filters.valueOffered = "";
+      sync("#filter-value-offered", "");
+      break;
+    case "valueDemanded":
+      filters.valueDemanded = "";
+      sync("#filter-value-demanded", "");
+      break;
+    default:
+      return;
+  }
+  renderFilterChips();
+  renderFeed();
+}
+
+function updatePostLangHint() {
+  const hint = $("#post-lang-detect");
+  if (!hint) return;
+  const d = wizardCollect();
+  const typed = [d.title, d.desc, d.when, d.rate].join(" ");
+  const detected = LangDetect.detectHint(typed);
+  if (!detected) {
+    hint.textContent = "";
+    hint.classList.add("hidden");
+    return;
+  }
+  const lab = LOCALE_LABELS[detected];
+  hint.classList.remove("hidden");
+  hint.textContent = tf("postLangDetect", { lang: lab ? lab.native + " (" + detected + ")" : detected });
+}
+
 function filteredGigs() {
   const savedSet = new Set(getSavedIds());
   const hiddenSet = new Set(getHiddenIds());
   return allGigs()
+    .map(LangDetect.ensureGigLang)
     .filter((g) => g.status === "live")
     .filter((g) => !hiddenSet.has(String(g.id)))
     .filter((g) => !hideDemo || !g.sample)
@@ -1580,13 +1904,7 @@ function filteredGigs() {
       if (feedType === "saved") return savedSet.has(String(g.id));
       return g.type === feedType;
     })
-    .filter((g) => !filters.category || g.category === filters.category)
-    .filter((g) => !filters.khan || g.khan === filters.khan)
-    .filter((g) => {
-      if (!filters.language) return true;
-      if (filters.language === "both") return true;
-      return g.language === filters.language || g.language === "both";
-    })
+    .filter((g) => FilterModel.matches(g, filters))
     .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 }
 
@@ -1603,6 +1921,11 @@ function cardHtml(g, opts = {}) {
   const chips = [
     `<span class="chip ${g.type}">${g.type === "need" ? t("needChip") : t("offerChip")}</span>`,
     `<span class="chip cat">${catLabel(g.category)}</span>`,
+    (() => {
+      const gl = LangDetect.ensureGigLang(g).lang;
+      const lab = LOCALE_LABELS[gl];
+      return gl ? `<span class="chip lang" title="lang">${escapeHtml(lab ? lab.native : gl)}</span>` : "";
+    })(),
     g.sample ? `<span class="chip sample">${t("sampleChip")}</span>` : "",
     g.shared && !g.sample ? `<span class="chip shared">${t("sharedChip")}</span>` : "",
     hasTelegram(g) ? `<span class="chip tg">${t("tgBadge")}</span>` : "",
@@ -1654,7 +1977,7 @@ function renderFeed() {
   renderProgress();
 
   if (!items.length) {
-    const filtersActive = !!(filters.category || filters.khan || filters.language);
+    const filtersActive = FilterModel.isActive(filters);
     const savedSet = new Set(getSavedIds());
     const hiddenSet = new Set(getHiddenIds());
     const unfiltered = allGigs()
@@ -1771,10 +2094,11 @@ function renderDemoBar() {
 }
 
 function clearFilters() {
-  filters = { category: "", khan: "", language: "" };
-  $("#filter-cat").value = "";
-  $("#filter-khan").value = "";
-  $("#filter-lang").value = "";
+  filters = FilterModel.empty();
+  ["#filter-cat", "#filter-khan", "#filter-lang", "#filter-tags", "#filter-date-after", "#filter-date-before", "#filter-value-offered", "#filter-value-demanded"].forEach((sel) => {
+    const el = $(sel); if (el) el.value = "";
+  });
+  renderFilterChips();
   renderFeed();
   toast(t("clearFilters"));
 }
@@ -2080,6 +2404,7 @@ function wizardCollect() {
     desc: val("#post-desc").trim(),
     khan: val("#post-khan"),
     contact: val("#post-contact"),
+    lang: val("#post-lang"),
   };
 }
 
@@ -2127,6 +2452,7 @@ function wizardRender() {
   const remembered = $("#khan-remembered");
   if (remembered) remembered.classList.toggle("hidden", !(lastKhan() && d.khan === lastKhan()));
   renderContactPreview();
+  updatePostLangHint();
   if (step === 4) renderReview();
 }
 
@@ -2152,6 +2478,8 @@ function wizardGig() {
   if (!c.ok || !ContactLinks.isAllowed(c.url)) return null;
   const titles = PhaseA.titleFields(d.title);
   const typed = [d.title, d.desc, d.when, d.rate].join(" ");
+  const postLang = LangDetect.resolvePostLang({ declared: d.lang, text: typed, uiLocale: lang });
+  const legacyLanguage = PhaseA.hasKhmer(typed) ? (/[A-Za-z]{3,}/.test(typed) ? "both" : "km") : "en";
   return {
     type: d.type === "offer" ? "offer" : "need",
     category: d.category,
@@ -2165,7 +2493,9 @@ function wizardGig() {
     whatsapp: "",
     phone: "",
     khqr_image_url: "",
-    language: PhaseA.hasKhmer(typed) ? (/[A-Za-z]{3,}/.test(typed) ? "both" : "km") : "en",
+    language: legacyLanguage,
+    lang: postLang,
+    tags: d.category ? [d.category] : [],
     status: "live",
     sample: false,
   };
@@ -2259,8 +2589,9 @@ async function handlePostGig(e) {
     toast(t("postedOk"));
     selectedId = null;
     feedType = gig.type;
-    filters = { category: "", khan: "", language: "" };
-    ["#filter-cat", "#filter-khan", "#filter-lang"].forEach((sel) => { const el = $(sel); if (el) el.value = ""; });
+    filters = FilterModel.empty();
+    ["#filter-cat", "#filter-khan", "#filter-lang", "#filter-tags", "#filter-date-after", "#filter-date-before", "#filter-value-offered", "#filter-value-demanded"].forEach((sel) => { const el = $(sel); if (el) el.value = ""; });
+    renderFilterChips();
     switchMainTab("browse");
     setFeedType(gig.type);
     window.scrollTo({ top: 0 });
@@ -2286,6 +2617,12 @@ function bindWizard() {
   if (contact) contact.addEventListener("input", renderContactPreview);
   const khan = $("#post-khan");
   if (khan) khan.addEventListener("change", wizardRender);
+  ["#post-title", "#post-desc", "#post-rate", "#post-when"].forEach((sel) => {
+    const el = $(sel);
+    if (el) el.addEventListener("input", updatePostLangHint);
+  });
+  const postLang = $("#post-lang");
+  if (postLang) postLang.addEventListener("change", updatePostLangHint);
 }
 
 
@@ -2402,6 +2739,15 @@ function bind() {
   $$(".lang-toggle button").forEach((b) =>
     b.addEventListener("click", () => setLang(b.dataset.lang))
   );
+  const chipsRoot = $("#filter-chips");
+  if (chipsRoot && !chipsRoot.dataset.boundClear) {
+    chipsRoot.dataset.boundClear = "1";
+    chipsRoot.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-clear]");
+      if (!btn || !chipsRoot.contains(btn)) return;
+      clearOneFilter(btn.dataset.clear);
+    });
+  }
   $$(".tab-bar button").forEach((b) =>
     b.addEventListener("click", () => switchMainTab(b.dataset.tab))
   );
@@ -2410,15 +2756,43 @@ function bind() {
   );
   $("#filter-cat").addEventListener("change", (e) => {
     filters.category = e.target.value;
+    renderFilterChips();
     renderFeed();
   });
   $("#filter-khan").addEventListener("change", (e) => {
     filters.khan = e.target.value;
+    renderFilterChips();
     renderFeed();
   });
   $("#filter-lang").addEventListener("change", (e) => {
-    filters.language = e.target.value;
+    const v = e.target.value;
+    if (v === "both") {
+      filters.language = "both";
+      filters.lang = "";
+    } else {
+      filters.language = "";
+      filters.lang = v;
+    }
+    renderFilterChips();
     renderFeed();
+  });
+  const bindFilter = (sel, key, parse) => {
+    const el = $(sel);
+    if (!el) return;
+    const ev = el.tagName === "INPUT" && el.type !== "date" ? "input" : "change";
+    el.addEventListener(ev, () => {
+      filters[key] = parse ? parse(el.value) : el.value;
+      renderFilterChips();
+      renderFeed();
+    });
+  };
+  bindFilter("#filter-date-after", "postedAfter");
+  bindFilter("#filter-date-before", "postedBefore");
+  bindFilter("#filter-value-offered", "valueOffered");
+  bindFilter("#filter-value-demanded", "valueDemanded");
+  bindFilter("#filter-tags", "tags", (v) => {
+    const s = String(v || "").trim().toLowerCase();
+    return s ? [s] : [];
   });
   const demoBtn = $("#btn-toggle-demo");
   if (demoBtn) demoBtn.addEventListener("click", () => setHideDemo(!hideDemo));
