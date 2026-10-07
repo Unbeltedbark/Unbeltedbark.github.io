@@ -34,14 +34,14 @@
         <div class="sub" data-i18n="appSub">Phnom Penh short gigs · off-app chat</div>
       </div>
     </div>
-    <div class="lang-toggle" role="group" aria-label="Language">
+    <div class="lang-toggle" role="group" data-i18n-aria="ariaLangToggle" aria-label="Language">
       <button type="button" data-lang="en" class="active" aria-label="English" aria-pressed="true">EN</button>
       <button type="button" data-lang="km" aria-label="Khmer" aria-pressed="false">ខ្មែរ</button>
     </div>
   </header>
 
   <main id="main-content" tabindex="-1">
-    <section id="panel-browse" class="panel active" aria-label="Browse">
+    <section id="panel-browse" class="panel active" data-i18n-aria="ariaPanelBrowse" aria-label="Browse">
       <div id="browse-list-view">
         <div id="first-open-banner" class="first-open hidden" role="region" aria-labelledby="first-open-text">
           <p id="first-open-text" class="first-open-text"><span data-i18n="firstOpenBody">Short gigs near you in Phnom Penh. Tap a card, confirm once, then chat on Telegram.</span> <span id="first-open-install" class="first-open-install" data-i18n="firstOpenInstall">Tip: add it to your Home Screen.</span></p>
@@ -49,7 +49,7 @@
         </div>
 
         <div class="filters-sticky" id="filters-sticky">
-          <div class="type-tabs" role="tablist" aria-label="Feed type">
+          <div class="type-tabs" role="tablist" data-i18n-aria="ariaFeedType" aria-label="Feed type">
             <button type="button" data-feed="need" class="active-need" data-i18n="tabNeed" aria-pressed="true">Gigs needed</button>
             <button type="button" data-feed="offer" data-i18n="tabOfferFeed" aria-pressed="false">People offering</button>
             <button type="button" data-feed="saved" data-i18n="tabSaved" aria-pressed="false">Saved</button>
@@ -73,7 +73,7 @@
         <p id="shared-feed-status" class="shared-feed-status hidden" role="status" aria-live="polite"></p>
         <div class="feed-meta-row">
           <div class="feed-count" id="feed-count" aria-live="polite"></div>
-          <div class="demo-row" id="demo-bar" role="group" aria-label="SAMPLE demo cards">
+          <div class="demo-row" id="demo-bar" role="group" data-i18n-aria="ariaDemoBar" aria-label="SAMPLE demo cards">
             <span class="demo-row-text" id="demo-banner-copy">SAMPLE demo cards are hidden.</span>
             <button type="button" class="link-btn demo-toggle" id="btn-toggle-demo" aria-pressed="false">Show SAMPLE</button>
           </div>
@@ -91,7 +91,7 @@
       </div>
     </section>
 
-    <section id="panel-post" class="panel" aria-label="Post">
+    <section id="panel-post" class="panel" data-i18n-aria="ariaPanelPost" aria-label="Post">
       <div class="card wizard">
         <div class="wizard-head">
           <h2 data-i18n="wizTitle">Post</h2>
@@ -132,7 +132,7 @@
           <fieldset class="wiz-step hidden" data-step="3">
             <legend data-i18n="wizStep3">How should people reach you?</legend>
             <label for="post-contact" data-i18n="fieldContact">Telegram, WhatsApp, or phone</label>
-            <input id="post-contact" type="text" maxlength="80" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="@name · t.me/name · 012 345 678" aria-describedby="post-contact-hint contact-preview" />
+            <input id="post-contact" type="text" maxlength="80" autocomplete="off" autocapitalize="off" spellcheck="false" data-i18n-placeholder="phContact" placeholder="@name · t.me/name · 012 345 678" aria-describedby="post-contact-hint contact-preview" />
             <p id="post-contact-hint" class="field-hint" data-i18n="fieldContactHint">Type @name, t.me/name, wa.me/855…, 012 345 678 or +855…</p>
             <p id="contact-preview" class="contact-preview" aria-live="polite"></p>
           </fieldset>
@@ -153,7 +153,7 @@
       </div>
     </section>
 
-    <section id="panel-mine" class="panel" aria-label="My posts">
+    <section id="panel-mine" class="panel" data-i18n-aria="ariaPanelMine" aria-label="My posts">
       <div class="card">
         <h2 data-i18n="mineTitle">My posts</h2>
         <p id="mine-progress" class="progress-line"></p>
@@ -163,7 +163,7 @@
       <div id="mine-list"></div>
     </section>
 
-    <section id="panel-safety" class="panel" aria-label="Safety">
+    <section id="panel-safety" class="panel" data-i18n-aria="ariaPanelSafety" aria-label="Safety">
       <div class="card howto">
         <h2 data-i18n="safetyTitle">Safety & how it works</h2>
 
@@ -202,17 +202,17 @@
         <p style="margin-top:6px">
           <a href="mailto:grangerover@gmail.com?subject=Local%20Gigs%20PP%20report">grangerover@gmail.com</a>
         </p>
-        <div id="hidden-mgmt" class="hidden-mgmt" aria-label="Hidden gigs on this device">
+        <div id="hidden-mgmt" class="hidden-mgmt" data-i18n-aria="ariaHiddenMgmt" aria-label="Hidden gigs on this device">
           <h3 data-i18n="hiddenMgmtTitle">Hidden on this device</h3>
           <p id="hidden-count" class="muted small">0 hidden</p>
           <button type="button" class="btn btn-secondary" id="btn-clear-hidden" data-i18n="clearHidden" aria-label="Clear all hidden gigs on this device">Clear hidden</button>
         </div>
-        <p id="app-version-stamp" class="version-stamp muted" aria-label="App version">v0.14.2</p>
+        <p id="app-version-stamp" class="version-stamp muted" aria-label="App version">v0.14.5</p>
       </div>
     </section>
   </main>
 
-  <nav class="tab-bar" aria-label="Main">
+  <nav class="tab-bar" data-i18n-aria="ariaTabBar" aria-label="Main">
     <button type="button" data-tab="browse" class="active"><span class="ico" aria-hidden="true">🏠</span><span data-i18n="tabBrowse">Browse</span></button>
     <button type="button" data-tab="post"><span class="ico" aria-hidden="true">➕</span><span data-i18n="tabPost">Post</span></button>
     <button type="button" data-tab="mine"><span class="ico" aria-hidden="true">📋</span><span data-i18n="tabMine">My posts</span></button>

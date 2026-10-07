@@ -1,5 +1,5 @@
-/* Local Gigs PP — shell cache v0.14.2 — cyan polish wave */
-const CACHE = "gig-agg-v0.14.2-cyan-p";
+/* Local Gigs PP — shell cache v0.14.5 — cyan km visual */
+const CACHE = "gig-agg-v0.14.5-cyan-km";
 const ASSETS = [
   "./",
   "./index.html",
@@ -17,6 +17,8 @@ const ASSETS = [
   "./icons/apple-touch-icon.png",
   "./icons/favicon-32.png",
   "./icons/icon.svg",
+  "./fonts/NotoSansKhmer-Regular.ttf",
+  "./fonts/NotoSansKhmer-Bold.ttf",
 ];
 
 self.addEventListener("install", (event) => {

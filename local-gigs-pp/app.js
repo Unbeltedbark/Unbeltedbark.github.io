@@ -1,10 +1,10 @@
-/* Local Gig Aggregator v0.14.2 — Cyan visual polish on polish-wave + Phase B: shared feed.json + optional mailto/Telegram submit + Pages host.
+/* Local Gig Aggregator v0.14.5 — Khmer chrome polish + offline empty/retry honesty on polish-wave + Phase B: shared feed.json + optional mailto/Telegram submit + Pages host.
    Phase A: clearer cards, 4-step post wizard, safe contact links.
    Pack 14: path reliability (post/browse/contact).
    Pack 13: modal fix, safe storage, reserved slots, content guard, terms gate.
    Seeded JSON + localStorage + optional shared Sheet. No escrow / dispatch / wallets. No ad / billing SDKs.
 */
-const APP_VERSION = "v0.14.2";
+const APP_VERSION = "v0.14.5";
 /** Bump when terms.html changes materially — users re-accept on next open. */
 const TERMS_VERSION = "2026-10-05";
 
@@ -90,7 +90,7 @@ const I18N = {
     filled: "Filled",
     confirmDelete: "Delete this post permanently from this phone?",
     safetyTitle: "Safety & how it works",
-    emptyFeed: "No listings in this feed right now.",
+    emptyFeed: "No listings here right now.",
     emptyFeedHint: "Try the other tab, post on this phone, or Show SAMPLE for demo cards (not real people).",
     clearFilters: "Clear filters",
     requiredTitle: "Title is required",
@@ -108,7 +108,7 @@ const I18N = {
     sharedBoardMailApp: "your email app",
     sharedBoardTelegramApp: "Telegram",
     sharedFeedLine: "Shared board · updated {when}",
-    sharedFeedEmptyLine: "Shared board · no published posts yet (soft launch)",
+    sharedFeedEmptyLine: "Shared board · no published posts yet (soft launch — not live city-wide)",
     sharedFeedOffline: "Offline — last shared board from {when}. Reconnect to refresh.",
     sharedFeedLoading: "Loading shared board…",
     sharedFeedEmpty: "Shared board is empty right now.",
@@ -131,7 +131,7 @@ const I18N = {
     howTitle3: "Safety",
     how3: "18+ only — no gigs involving minors. Public meet first. Don’t send deposits to strangers. Exact address only after you trust the chat. Remove your own posts in My Posts.",
     howTitle4: "Moderation",
-    how4: "SAMPLE cards are fake demo data. Your posts stay on this phone. The shared board is a soft launch — it may be empty. Chats happen off-app.",
+    how4: "SAMPLE cards are fake demo data. Your posts stay on this phone. The shared board is a soft launch — it may be empty, not a live moderated marketplace. Chats happen off-app.",
     privacyLink: "Privacy policy",
     loading: "Loading gigs…",
     loadError: "Couldn’t refresh seed data. Showing cache / local posts if available.",
@@ -170,7 +170,7 @@ const I18N = {
     safetyUgc: "User posts and SAMPLE seed can appear here. Messaging happens off-app (Telegram / WhatsApp / phone). We don’t moderate live chats.",
     safetyNoEscrow: "No escrow, wallets, deposits, or in-app payments — ever.",
     offlineDismiss: "Dismiss",
-    offlineFetchFail: "Couldn’t refresh — showing cache / posts on this phone. Tap Retry when you’re online.",
+    offlineFetchFail: "Couldn’t refresh — showing saved data / posts on this phone. Tap Retry when you’re online.",
     offlineRetry: "Retry",
     abuseContact: "Report abuse or policy questions: grangerover@gmail.com",
     ariaCopyDetails: "Copy gig details as text",
@@ -223,17 +223,17 @@ const I18N = {
     termsGateCheck: "I am 18+ and I accept the Terms & Disclaimer",
     termsGateAccept: "Accept & continue",
     // Phase A (v0.13)
-    firstOpenBody: "Phnom Penh soft launch. SAMPLE cards are fake. Shared board may be empty. Tap a card, confirm once, then chat on Telegram.",
+    firstOpenBody: "Phnom Penh soft launch. SAMPLE cards are fake demo. Shared board may be empty — not a live city marketplace. Tap a card, confirm once, then chat on Telegram.",
     firstOpenInstall: "Tip: add it to your Home Screen.",
     firstOpenDismiss: "Got it",
     ariaFirstOpenDismiss: "Dismiss welcome note",
     demoRowShown: "SAMPLE demo cards on — fake handles, not real people.",
-    demoRowHidden: "SAMPLE demo cards hidden (soft launch).",
+    demoRowHidden: "SAMPLE demo cards hidden (soft launch — demo only).",
     emptyFirstNeed: "Nothing on this phone yet.",
     emptyFirstOffer: "No offers on this phone yet.",
     postFirstGig: "Post on this phone",
     postFirstOffer: "Post an offer on this phone",
-    softLaunchEmptyHint: "Shared board has no published posts yet — soft launch, not a live city marketplace. Show SAMPLE for demo cards, or post on this phone.",
+    softLaunchEmptyHint: "Shared board has no published posts yet — soft launch, not a live city-wide board. Show SAMPLE for demo cards, or post on this phone.",
     sharedFeedOfflineRetryHint: "Reconnect, then tap Retry.",
     progressNone: "None of your posts are on this phone yet.",
     progressOne: "1 of your posts is on this phone.",
@@ -278,6 +278,19 @@ const I18N = {
     copyHeadOffer: "Offering help in Phnom Penh",
     copySampleNote: "(SAMPLE demo listing — not a real person)",
     copyFooter: "Seen on Local Gigs PP — open the app to contact.",
+    // Khmer chrome (v0.14.3)
+    emptyOfflineHint: "You’re offline — cached SAMPLE seed + posts on this phone only. Not a live city board. Reconnect, then tap Retry.",
+    khanOther: "Other",
+    phContact: "@name · t.me/name · 012 345 678",
+    ariaLangToggle: "Language",
+    ariaFeedType: "Feed type",
+    ariaDemoBar: "SAMPLE demo cards",
+    ariaTabBar: "Main",
+    ariaPanelBrowse: "Browse",
+    ariaPanelPost: "Post",
+    ariaPanelMine: "My posts",
+    ariaPanelSafety: "Safety",
+    ariaHiddenMgmt: "Hidden gigs on this device",
     labelSep: ": ",
   },
   km: {
@@ -322,8 +335,8 @@ const I18N = {
     filled: "រួចហើយ",
     confirmDelete: "លុបការផ្សាយនេះចេញពីទូរស័ព្ទជាអចិន្ត្រៃយ៍?",
     safetyTitle: "សុវត្ថិភាព និងរបៀបប្រើ",
-    emptyFeed: "មិនទាន់មានការផ្សាយក្នុង feed នេះ។",
-    emptyFeedHint: "សាក tab ផ្សេង ផ្សាយលើទូរស័ព្ទ ឬបង្ហាញ SAMPLE (មិនមែនមនុស្សពិត)។",
+    emptyFeed: "មិនទាន់មានការផ្សាយនៅទីនេះទេ។",
+    emptyFeedHint: "សាកផ្ទាំងផ្សេង ផ្សាយលើទូរស័ព្ទ ឬបង្ហាញ SAMPLE (មិនមែនមនុស្សពិត)។",
     clearFilters: "សម្អាតតម្រង",
     requiredTitle: "សូមបញ្ចូលចំណងជើង",
     requiredCat: "ជ្រើសប្រភេទយ៉ាងហោច១",
@@ -340,7 +353,7 @@ const I18N = {
     sharedBoardMailApp: "កម្មវិធីអ៊ីមែល",
     sharedBoardTelegramApp: "Telegram",
     sharedFeedLine: "ក្តាររួម · ធ្វើបច្ចុប្បន្នភាព {when}",
-    sharedFeedEmptyLine: "ក្តាររួម · មិនទាន់មានការផ្សាយសាធារណៈ (soft launch)",
+    sharedFeedEmptyLine: "ក្តាររួម · មិនទាន់មានការផ្សាយសាធារណៈ (ដំណាក់កាលសាក — មិនមែនទូទាំងទីក្រុង)",
     sharedFeedOffline: "គ្មានអ៊ីនធឺណិត — ក្តាររួមចុងក្រោយពី {when}។ ភ្ជាប់ម្តងទៀតដើម្បីផ្ទុកឡើងវិញ។",
     sharedFeedLoading: "កំពុងផ្ទុកក្តាររួម…",
     sharedFeedEmpty: "ក្តាររួមទទេឥឡូវនេះ។",
@@ -363,7 +376,7 @@ const I18N = {
     howTitle3: "សុវត្ថិភាព",
     how3: "១៨ឆ្នាំឡើង — គ្មានការងារពាក់ព័ន្ធកុមារ។ ជួបកន្លែងសាធារណៈមុន។ កុំផ្ញើកក់ឱ្យមនុស្សចម្លែក។ អាសយដ្ឋានពិតប្រាកដបន្ទាប់ពីទុកចិត្ត។",
     howTitle4: "ការត្រួតពិនិត្យ",
-    how4: "SAMPLE ជាទិន្នន័យក្លែងក្លាយ។ ការផ្សាយនៅលើទូរស័ព្ទ។ ក្តាររួមជា soft launch — អាចទទេ។ ការជជែកនៅក្រៅកម្មវិធី។",
+    how4: "SAMPLE ជាទិន្នន័យក្លែងក្លាយ។ ការផ្សាយនៅលើទូរស័ព្ទ។ ក្តាររួមជាដំណាក់កាលសាក — អាចទទេ មិនមែនទីផ្សារដែលត្រួតពិនិត្យផ្ទាល់។ ការជជែកនៅក្រៅកម្មវិធី។",
     privacyLink: "គោលការណ៍ភាពឯកជន",
     loading: "កំពុងផ្ទុក…",
     loadError: "មិនអាចផ្ទុកទិន្នន័យថ្មី។ បង្ហាញទិន្នន័យរក្សាទុក និងការផ្សាយលើទូរស័ព្ទ។",
@@ -382,7 +395,7 @@ const I18N = {
     noContact: "គ្មានទំនាក់ទំនងលើការផ្សាយនេះ។",
     hideDemo: "លាក់ SAMPLE",
     showDemo: "បង្ហាញ SAMPLE",
-    mineEmptyHint: "ការផ្សាយរបស់អ្នកនៅលើទូរស័ព្ទ (soft launch — ក្តាររួមដាច់ដោយឡែក)។",
+    mineEmptyHint: "ការផ្សាយរបស់អ្នកនៅលើទូរស័ព្ទ (ដំណាក់កាលសាក — ក្តាររួមដាច់ដោយឡែក)។",
     exportPosts: "នាំចេញការផ្សាយរបស់ខ្ញុំ",
     exportOk: "បានទាញយកការផ្សាយ (JSON)",
     exportEmpty: "គ្មានអ្វីនាំចេញ — សូមផ្សាយការងារសិន។",
@@ -402,7 +415,7 @@ const I18N = {
     safetyUgc: "ការផ្សាយរបស់អ្នកប្រើ និង SAMPLE អាចបង្ហាញ។ ការជជែកនៅក្រៅកម្មវិធី (Telegram / WhatsApp / ទូរស័ព្ទ)។ យើងមិនត្រួតពិនិត្យការជជែកផ្ទាល់ទេ។",
     safetyNoEscrow: "គ្មាន escrow / កាបូបលុយ / កក់ / បង់ប្រាក់ក្នុងកម្មវិធី — មិនដែលមាន។",
     offlineDismiss: "បិទ",
-    offlineFetchFail: "មិនអាចផ្ទុកការងារថ្មី — បង្ហាញ cache / ការផ្សាយលើទូរស័ព្ទ។ តភ្ជាប់អ៊ីនធឺណិតដើម្បីព្យាយាមម្តងទៀត។",
+    offlineFetchFail: "មិនអាចផ្ទុកឡើងវិញ — បង្ហាញទិន្នន័យរក្សាទុក / ការផ្សាយលើទូរស័ព្ទ។ ចុចព្យាយាមម្តងទៀត ពេលមានអ៊ីនធឺណិត។",
     offlineRetry: "ព្យាយាមម្តងទៀត",
     abuseContact: "រាយការណ៍ការបំពាន ឬសំណួរគោលការណ៍៖ grangerover@gmail.com",
     ariaCopyDetails: "ចម្លងព័ត៌មានការងារជាអត្ថបទ",
@@ -455,17 +468,17 @@ const I18N = {
     termsGateCheck: "ខ្ញុំមានអាយុ ១៨ឆ្នាំឡើង ហើយយល់ព្រមតាមលក្ខខណ្ឌ",
     termsGateAccept: "យល់ព្រម និងបន្ត",
     // Phase A (v0.13) — KM strings below need native-speaker review (store/LOCALIZATION_NOTES.md)
-    firstOpenBody: "Soft launch ភ្នំពេញ។ SAMPLE ក្លែងក្លាយ។ ក្តាររួមអាចទទេ។ ចុចកាត បញ្ជាក់ម្តង រួចជជែកតាម Telegram។",
+    firstOpenBody: "ដំណាក់កាលសាក ភ្នំពេញ។ SAMPLE ក្លែងក្លាយ។ ក្តាររួមអាចទទេ — មិនមែនទីផ្សារទូទាំងទីក្រុង។ ចុចកាត បញ្ជាក់ម្តង រួចជជែកតាម Telegram។",
     firstOpenInstall: "គន្លឹះ៖ បន្ថែមវាទៅអេក្រង់ដើម។",
     firstOpenDismiss: "យល់ហើយ",
     ariaFirstOpenDismiss: "បិទសារស្វាគមន៍",
     demoRowShown: "កាត SAMPLE បើក — ឈ្មោះក្លែងក្លាយ មិនមែនមនុស្សពិត។",
-    demoRowHidden: "កាត SAMPLE លាក់ (soft launch)។",
+    demoRowHidden: "កាត SAMPLE លាក់ (ដំណាក់កាលសាក — សម្រាប់សាកល្បង)។",
     emptyFirstNeed: "មិនទាន់មានអ្វីលើទូរស័ព្ទនេះទេ។",
     emptyFirstOffer: "មិនទាន់មានការផ្តល់ជំនាញលើទូរស័ព្ទនេះទេ។",
     postFirstGig: "ផ្សាយលើទូរស័ព្ទនេះ",
     postFirstOffer: "ផ្សាយជំនាញលើទូរស័ព្ទនេះ",
-    softLaunchEmptyHint: "ក្តាររួមមិនទាន់មានការផ្សាយសាធារណៈ — soft launch មិនមែនទីផ្សារទូទាំងទីក្រុង។ បង្ហាញ SAMPLE សម្រាប់កាតសាក ឬផ្សាយលើទូរស័ព្ទ។",
+    softLaunchEmptyHint: "ក្តាររួមមិនទាន់មានការផ្សាយសាធារណៈ — ដំណាក់កាលសាក មិនមែនក្តារផ្សាយទូទាំងទីក្រុង។ បង្ហាញ SAMPLE សម្រាប់កាតសាក ឬផ្សាយលើទូរស័ព្ទ។",
     sharedFeedOfflineRetryHint: "ភ្ជាប់អ៊ីនធឺណិត រួចចុចព្យាយាមម្តងទៀត។",
     progressNone: "មិនទាន់មានការផ្សាយរបស់អ្នកនៅលើទូរស័ព្ទនេះទេ។",
     progressOne: "ការផ្សាយរបស់អ្នក ១ នៅលើទូរស័ព្ទនេះ។",
@@ -510,6 +523,19 @@ const I18N = {
     copyHeadOffer: "ផ្តល់ជំនួយនៅភ្នំពេញ",
     copySampleNote: "(ការផ្សាយ SAMPLE សាកល្បង — មិនមែនមនុស្សពិតទេ)",
     copyFooter: "ឃើញនៅ Local Gigs PP — បើកកម្មវិធីដើម្បីទាក់ទង។",
+    // Khmer chrome (v0.14.3) — KM drafts need native-speaker review (store/LOCALIZATION_NOTES.md)
+    emptyOfflineHint: "គ្មានអ៊ីនធឺណិត — បង្ហាញ SAMPLE រក្សាទុក និងការផ្សាយលើទូរស័ព្ទតែប៉ុណ្ណោះ។ មិនមែនក្តារផ្សាយផ្ទាល់ទេ។ ភ្ជាប់ម្តងទៀត រួចចុចព្យាយាមម្តងទៀត។",
+    khanOther: "ផ្សេងៗ",
+    phContact: "@name · t.me/name · 012 345 678",
+    ariaLangToggle: "ភាសា",
+    ariaFeedType: "ប្រភេទបញ្ជី",
+    ariaDemoBar: "កាត SAMPLE សាកល្បង",
+    ariaTabBar: "ម៉ឺនុយមេ",
+    ariaPanelBrowse: "រកមើល",
+    ariaPanelPost: "ផ្សាយ",
+    ariaPanelMine: "របស់ខ្ញុំ",
+    ariaPanelSafety: "សុវត្ថិភាព",
+    ariaHiddenMgmt: "ការងារដែលលាក់លើទូរស័ព្ទនេះ",
     labelSep: "៖ ",
   },
 };
@@ -1238,7 +1264,7 @@ const TermsGate = {
     const wasChecked = !!(el.querySelector("#terms-check") || {}).checked;
     const pts = [1, 2, 3, 4, 5].map((n) => `<li>${t("termsGatePt" + n)}</li>`).join("");
     el.innerHTML = `<div class="terms-gate-card">
-      <div class="lang-toggle terms-gate-lang" role="group" aria-label="Language">
+      <div class="lang-toggle terms-gate-lang" role="group" data-i18n-aria="ariaLangToggle" aria-label="Language">
         <button type="button" data-gate-lang="en" class="${lang === "en" ? "active" : ""}" aria-pressed="${lang === "en"}">EN</button>
         <button type="button" data-gate-lang="km" class="${lang === "km" ? "active" : ""}" aria-pressed="${lang === "km"}">ខ្មែរ</button>
       </div>
@@ -1445,6 +1471,9 @@ function applyI18n() {
   $$("[data-i18n-placeholder]").forEach((el) => {
     el.placeholder = t(el.getAttribute("data-i18n-placeholder"));
   });
+  $$("[data-i18n-aria]").forEach((el) => {
+    el.setAttribute("aria-label", t(el.getAttribute("data-i18n-aria")));
+  });
   $$(".lang-toggle button").forEach((b) => {
     const on = b.dataset.lang === lang;
     b.classList.toggle("active", on);
@@ -1482,12 +1511,16 @@ function setLang(next) {
   applyI18n();
 }
 
+function khanLabel(k) {
+  return k === "Other" ? t("khanOther") : k;
+}
+
 function fillSelects() {
   const catOpts = [`<option value="">${t("all")}</option>`]
     .concat(CATEGORIES.map((c) => `<option value="${c.id}">${c.icon} ${lang === "km" ? c.km : c.en}</option>`))
     .join("");
   const khanOpts = [`<option value="">${t("all")}</option>`]
-    .concat(KHANS.map((k) => `<option value="${k}">${k}</option>`))
+    .concat(KHANS.map((k) => `<option value="${k}">${khanLabel(k)}</option>`))
     .join("");
   const langOpts = [
     `<option value="">${t("all")}</option>`,
@@ -1525,7 +1558,7 @@ function fillSelects() {
     const prev = pk.value;
     const last = lastKhan();
     pk.innerHTML = [`<option value="">${t("pickKhan")}</option>`]
-      .concat(KHANS.map((k) => `<option value="${k}">${k}</option>`)).join("");
+      .concat(KHANS.map((k) => `<option value="${k}">${khanLabel(k)}</option>`)).join("");
     const want = prev || last;
     if ([...pk.options].some((o) => o.value === want)) pk.value = want;
   }
@@ -1579,7 +1612,7 @@ function cardHtml(g, opts = {}) {
   const pay = g.rate_text
     ? `<span class="pay">${escapeHtml(g.rate_text)}</span>`
     : `<span class="pay pay-ask">${t("payAsk")}</span>`;
-  const star = preview ? "" : `<button type="button" class="star-btn${starred ? " on" : ""}" data-star="${g.id}" aria-pressed="${starred ? "true" : "false"}" aria-label="${starred ? t("ariaUnstar") : t("ariaStar")}" title="${starred ? t("starUnsave") : t("starSave")}">${starred ? "★" : "☆"}</button>`;
+  const star = preview ? "" : `<button type="button" class="star-btn${starred ? " on" : ""}" data-star="${g.id}" aria-pressed="${starred ? "true" : "false"}" aria-label="${starred ? t("ariaUnstar") : t("ariaStar")}" title="${starred ? t("starUnsave") : t("starSave")}"><span class="star-glyph" aria-hidden="true">${starred ? "★" : "☆"}</span></button>`;
   const attrs = preview
     ? `class="gig-card type-${g.type} is-preview"`
     : `class="gig-card type-${g.type}${fresh ? " just-posted" : ""}" data-id="${escapeHtml(g.id)}" role="button" tabindex="0"`;
@@ -1639,13 +1672,25 @@ function renderFeed() {
     } else if (kind === "postFirst") {
       // Soft launch: never pitch a live city marketplace. One CTA = post on this phone
       // (or shared-board empty copy only when a submit channel is actually on).
+      // Offline / failed refresh: honest KM+EN status + Retry — never imply a live city board.
       const sharedPosting = SharedSheetFeed.canPost(feedConfig);
       const boardReadable = sharedFeedEnabled();
-      title = sharedPosting ? t("sharedFeedEmpty") : (feedType === "offer" ? t("emptyFirstOffer") : t("emptyFirstNeed"));
-      hint = boardReadable || !sharedPosting ? t("softLaunchEmptyHint") : "";
+      const netOff = !navigator.onLine;
+      const refreshBroken = seedLoadState === "error" || sharedFeedState === "offline" || sharedFeedState === "error";
+      title = sharedPosting && !netOff ? t("sharedFeedEmpty") : (feedType === "offer" ? t("emptyFirstOffer") : t("emptyFirstNeed"));
+      if (netOff || sharedFeedState === "offline") {
+        hint = t("emptyOfflineHint");
+      } else if (boardReadable || !sharedPosting) {
+        hint = t("softLaunchEmptyHint");
+      } else {
+        hint = "";
+      }
       ico = "📍";
-      const cta = sharedPosting ? t("sharedFeedEmptyAction") : (feedType === "offer" ? t("postFirstOffer") : t("postFirstGig"));
-      action = `<button type="button" class="btn btn-primary" id="btn-post-first" data-post-type="${feedType === "offer" ? "offer" : "need"}" style="max-width:280px;margin:14px auto 0">${cta}</button>`;
+      const cta = sharedPosting && !netOff ? t("sharedFeedEmptyAction") : (feedType === "offer" ? t("postFirstOffer") : t("postFirstGig"));
+      const retry = (netOff || refreshBroken)
+        ? `<button type="button" class="btn btn-secondary" id="btn-empty-retry" style="max-width:280px;margin:14px auto 0">${t("offlineRetry")}</button>`
+        : "";
+      action = `${retry}<button type="button" class="btn btn-primary" id="btn-post-first" data-post-type="${feedType === "offer" ? "offer" : "need"}" style="max-width:280px;margin:14px auto 0">${cta}</button>`;
     } else if (kind === "filter") {
       title = t("emptyFilter");
       hint = t("emptyFilterHint");
@@ -1666,6 +1711,12 @@ function renderFeed() {
     </div>`;
     const postFirst = $("#btn-post-first");
     if (postFirst) postFirst.addEventListener("click", () => openWizard(postFirst.dataset.postType));
+    const emptyRetry = $("#btn-empty-retry");
+    if (emptyRetry) emptyRetry.addEventListener("click", () => {
+      offlineDismissed = false;
+      loadSeed();
+      loadSharedFeed({ quiet: false });
+    });
     const btn = $("#btn-clear-filters");
     if (btn) btn.addEventListener("click", clearFilters);
     const gotoNeed = $("#btn-goto-need");
@@ -1919,7 +1970,7 @@ function renderDetail(id) {
     <div class="card">
       <div class="detail-top-row">
         <div>${chips}</div>
-        <button type="button" class="star-btn detail-star${starred ? " on" : ""}" id="btn-star-detail" aria-pressed="${starred ? "true" : "false"}" aria-label="${starred ? t("ariaUnstar") : t("ariaStar")}">${starred ? "★" : "☆"} <span class="star-label">${starred ? t("starUnsave") : t("starSave")}</span></button>
+        <button type="button" class="star-btn detail-star${starred ? " on" : ""}" id="btn-star-detail" aria-pressed="${starred ? "true" : "false"}" aria-label="${starred ? t("ariaUnstar") : t("ariaStar")}"><span class="star-glyph" aria-hidden="true">${starred ? "★" : "☆"}</span> <span class="star-label">${starred ? t("starUnsave") : t("starSave")}</span></button>
       </div>
       <div class="headline detail-headline">${g.rate_text ? `<span class="pay">${escapeHtml(g.rate_text)}</span>` : `<span class="pay pay-ask">${t("payAsk")}</span>`}<span class="khan">📍 ${escapeHtml(g.khan || "—")}</span></div>
       <h2 class="detail-title" lang="${titleLangOf(g)}">${escapeHtml(titleOf(g))}</h2>
@@ -2388,6 +2439,11 @@ function bind() {
   });
   window.addEventListener("offline", () => {
     offlineDismissed = false;
+    if (sharedFeedEnabled()) {
+      sharedFeedState = "offline";
+      renderSharedFeedStatus();
+      renderFeed();
+    }
     updateOfflineBanner();
   });
   document.addEventListener("keydown", (e) => {
@@ -2424,7 +2480,7 @@ function renderSharedFeedStatus() {
   const when = sharedFeedFetchedAt ? timeAgo(sharedFeedFetchedAt) : "—";
   if (sharedFeedState === "offline") {
     el.classList.add("is-offline");
-    el.innerHTML = `${escapeHtml(tf("sharedFeedOffline", { when }))} <button type="button" class="link-btn" id="btn-shared-retry">${escapeHtml(t("sharedFeedRetry"))}</button>`;
+    el.innerHTML = `${escapeHtml(tf("sharedFeedOffline", { when }))} ${escapeHtml(t("sharedFeedOfflineRetryHint"))} <button type="button" class="link-btn" id="btn-shared-retry">${escapeHtml(t("sharedFeedRetry"))}</button>`;
     const r = $("#btn-shared-retry");
     if (r) r.addEventListener("click", () => loadSharedFeed({ quiet: false }));
     return;
