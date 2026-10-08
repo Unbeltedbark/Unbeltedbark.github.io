@@ -401,3 +401,30 @@ html[lang="km"] body { line-height: 1.55; }
 html[lang="km"] .hero h1 { max-width: 14ch; }
 
 .hidden { display: none !important; }
+
+/* —— Ko-fi support link (web only). Plain text link + small cup, never a button or popup. —— */
+.kofi-link { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: var(--meta, #c9d2df); text-decoration: none; border-radius: 6px; }
+.kofi-link:hover { color: var(--text, #f2f5fa); text-decoration: underline; text-underline-offset: 3px; }
+.kofi-link .kofi-cup { flex: 0 0 auto; color: var(--muted, #9aa6b9); }
+.kofi-link:focus-visible { outline: 2px solid var(--accent-hot, #ffc857); outline-offset: 3px; }
+.kofi-slot[hidden], .kofi-off .kofi-slot { display: none !important; }
+/* Play/TWA + installed PWA guard (works even if kofi.js never runs). */
+@media (display-mode: standalone), (display-mode: fullscreen), (display-mode: minimal-ui) {
+  .kofi-slot { display: none !important; }
+}
+.site-foot-grid { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 24px 40px; }
+.site-foot-main p + p { margin-top: 6px; }
+.site-foot-h { font-size: 0.7rem; font-weight: 750; letter-spacing: 0.14em; text-transform: uppercase; color: #7f8a9c; margin: 0 0 6px; }
+.site-foot-links { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; column-gap: 20px; }
+.site-foot-links a { display: inline-flex; align-items: center; min-height: 44px; text-decoration: none; }
+.site-foot-links a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.site-foot .kofi-link { color: var(--muted); }
+.site-foot .kofi-link:hover { color: var(--text); }
+.site-foot .kofi-note { margin-top: 2px; font-size: 0.78rem; line-height: 1.45; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+@media (max-width: 720px) { .site-foot-grid { grid-template-columns: 1fr; gap: 16px; } }
+.site-foot .nowrap { white-space: nowrap; }
+
+/* Match Yerrow editorial footer: only cup + underline in amber. */
+.kofi-link .kofi-cup, .kofi-link:hover .kofi-cup, .site-foot .kofi-link .kofi-cup { color: #FFB020; }
+.kofi-link:hover, .kofi-link:focus-visible { text-decoration: underline; text-decoration-color: #FFB020; text-underline-offset: 3px; }
