@@ -80,9 +80,22 @@
   </main>
 
   <footer class="site-foot">
-    <p data-i18n="footNote">Website spike · same feed as the app · board submit OFF · Play parked</p>
-    <p class="pub" data-i18n="footPub">Publisher: .//Talentless/x/Hack</p>
-    <p><a href="../privacy.html">Privacy</a> · <a href="../terms.html">Terms</a> · <a href="../">PWA app</a></p>
+    <div class="site-foot-grid">
+      <div class="site-foot-main">
+        <p data-i18n="footNote">Website spike · same feed as the app · board submit OFF · Play parked</p>
+        <p class="pub" data-i18n="footPub">Publisher: .//Talentless/x/Hack</p>
+        <p><a href="../">PWA app</a></p>
+      </div>
+      <div class="site-foot-about">
+        <h2 class="site-foot-h">About</h2>
+        <ul class="site-foot-links">
+          <li><a href="../privacy.html" data-i18n="navPrivacy">Privacy</a></li>
+          <li><a href="../terms.html" data-i18n="navTerms">Terms</a></li>
+          <li class="kofi-slot" hidden><a class="kofi-link" href="#" data-kofi>Support us on Ko-fi<span class="sr-only"> (opens in a new tab)</span></a></li>
+        </ul>
+        <p class="kofi-slot kofi-note" hidden>Local Gigs is free. If it helps you, you can support us on <span class="nowrap">Ko-fi</span>.</p>
+      </div>
+    </div>
   </footer>
 
   <nav class="mobile-nav" aria-label="Primary">
@@ -92,5 +105,6 @@
   </nav>
 
   <script src="./site.js" defer></script>
+  <script src="../kofi.js" defer></script>
 </body>
 </html>
