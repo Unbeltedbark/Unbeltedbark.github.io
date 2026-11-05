@@ -1,5 +1,5 @@
 /* Local Gigs PP — shell cache v0.14.6-cyan — Cyan picker + filter chips */
-const CACHE = "gig-agg-v0.14.6-cyan";
+const CACHE = "gig-agg-v0.14.6-noemail";
 const ASSETS = [
   "./",
   "./index.html",
