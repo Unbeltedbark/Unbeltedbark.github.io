@@ -61,7 +61,7 @@
       showSample: "Show SAMPLE",
       hideSample: "Hide SAMPLE",
       sampleHidden: "SAMPLE demo cards hidden.",
-      sampleShown: "SAMPLE demo on — fake handles, not real people.",
+      sampleShown: "SAMPLE demo on — no contacts, not real people.",
       loading: "Loading shared board…",
       feedEmptyLine: "Shared board · no published posts yet (soft launch — not live city-wide)",
       feedLine: "Shared board · updated {when}",
@@ -75,7 +75,8 @@
       clearFilters: "Clear filters",
       openApp: "Open phone app",
       backBrowse: "All gigs",
-      sampleWarn: "⚠ SAMPLE — fake demo listing. Do not message this handle expecting a real person.",
+      sampleWarn: "⚠ SAMPLE — fake demo listing. No contact details — not a real person.",
+      noContact: "No contact on this listing.",
       contactConfirmTitle: "Leave Local Gigs PP?",
       contactConfirmBody: "You’ll open chat outside this site. Continue?",
       continue: "Continue",
@@ -139,6 +140,7 @@
       openApp: "បើកកម្មវិធី",
       backBrowse: "ការងារទាំងអស់",
       sampleWarn: "⚠ SAMPLE — ការផ្សាយសាកល្បងក្លែងក្លាយ។ កុំទាក់ទងដោយរំពឹងមនុស្សពិត។",
+      noContact: "គ្មានទំនាក់ទំនងលើការផ្សាយនេះ។",
       contactConfirmTitle: "ចាកចេញពី Local Gigs PP?",
       contactConfirmBody: "អ្នកនឹងបើកការជជែកក្រៅគេហទំព័រ។ បន្តទេ?",
       continue: "បន្ត",
@@ -568,7 +570,7 @@
       ? '<div class="contact-bar"><button type="button" class="btn btn-primary" id="btn-contact">' +
           escapeHtml(g.sample ? "SAMPLE contact" : "Contact") +
         "</button></div>"
-      : "";
+      : '<p class="detail-body">' + escapeHtml(t("noContact")) + "</p>";
     root.innerHTML =
       '<a class="detail-back" href="' + browseHref() + '">← ' + escapeHtml(t("backBrowse")) + "</a>" +
       sampleBlock +
